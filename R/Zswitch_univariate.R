@@ -38,9 +38,10 @@
 #' # if you have an unsteady number of posterior  non-empty groups:
 #' #subset posterior samples first by this then unswitch.
 
-        QuickSwitch_allPars<-function(GibbResult,isSim=TRUE, LineUpBy=1,PropMin=0.1 ){
+        QuickSwitch_allPars<-function(GibbResult, mydata=YZ, isSim=TRUE, LineUpBy=1,PropMin=0.1 ){
 			out_trim<-GibbResult;			K<-dim(out_trim$Ps)[2]
-			ifelse(isSim==TRUE, Y<-GibbResult$Y$Y, Y<-GibbResult$Y)
+			
+			ifelse(isSim==TRUE, Y<-mydata$Y, Y<-mydata)
 			
 			# Pick Reference = Max log Likelihood
 			wml<-which.max(out_trim$Loglike)
@@ -134,8 +135,8 @@
 			Zhat<- factor( apply(t(Zfixed), 2,maxZ))
 			levels(Zhat)<- levels(Zhat)<-as.character(BestOne)
 
-			ifelse(isSim==TRUE, RAND<-sum(GibbResult$Y$Z==Zhat)/length(Zhat)*100, RAND<-'NA')    
+			ifelse(isSim==TRUE, RAND<-sum(mydata$Z==Zhat)/length(Zhat)*100, RAND<-'NA')    
 
-			return(list('Pars'=AllPars, 'Zs'=Zfixed,  'SteadyScore'=out_trim$SteadyScore, 'RAND'=RAND, "Y"=Y))
+			return(list('Pars'=AllPars, 'Zs'=Zfixed,  'SteadyScore'=out_trim$SteadyScore, 'RAND'=RAND, "Y"=mydata))
 			}
 		

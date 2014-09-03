@@ -3,7 +3,7 @@
 \alias{Zagg}
 \title{Processing output of label switching function}
 \usage{
-Zagg(USout)
+Zagg(USout, .Y = Y)
 }
 \arguments{
 \item{output}{of UNIVARIATE label switching function}

@@ -8,7 +8,7 @@
 #' #nope
 
 
-Zagg<-	function(USout){
+Zagg<-	function(USout, .Y=Y){
 		
 			#Pars
 				.par<-melt(USout$Pars, id.vars=c("Iteration", "k"))
@@ -25,8 +25,8 @@ Zagg<-	function(USout){
          			.Mus<-theta$value[theta$variable=="Mu"]
 	         		for ( i in 1:length(Zemu)){
 	         			Zemu[i]<-.Mus[as.numeric(Zhat[i])]}
-	         	MSE<-sum((USout$Y-Zemu)^2)
-	         	MAE<-sum(abs(USout$Y-Zemu))
+	         	MSE<-sum((.Y-Zemu)^2)
+	         	MAE<-sum(abs(.Y-Zemu))
 
 	       		list("theta"=theta,  "Zpred"=Zhat, "MSE"=MSE, "MAE"=MAE)
 					}

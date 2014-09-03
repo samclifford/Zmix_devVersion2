@@ -10,7 +10,7 @@
 
 Zmix_univ_tempered<-function(y, k,iter=5000, EndSize=3000, isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))){
 					
-			ifelse(isSim==TRUE, Y<-y$Z, Y<-y)
+			ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
 
 				parallelAccept<-function(w1, w2, a1, a2){
 						w1[w1< 1e-200]<-1e-200             # truncate so super small values dont crash everyting

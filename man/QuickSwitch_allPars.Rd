@@ -3,7 +3,8 @@
 \alias{QuickSwitch_allPars}
 \title{Label switch fix for Univariate Normals}
 \usage{
-QuickSwitch_allPars(GibbResult, isSim = TRUE, LineUpBy = 1, PropMin = 0.1)
+QuickSwitch_allPars(GibbResult, mydata = YZ, isSim = TRUE, LineUpBy = 1,
+  PropMin = 0.1)
 }
 \arguments{
 \item{GibbResult:}{output of Gibbs run in a list
