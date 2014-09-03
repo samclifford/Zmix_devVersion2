@@ -15,7 +15,8 @@
 #'
 #' 		[[Zs]] estimated component (allocation) for each Y at each iteration (rows=n by columns=Iterations)  
 #'
-#' 		[[Y]] for simulations, list of Y$Y and Y$Z, the observed data and true groups. set Y$Z to NULL if unknown.
+#' 		[[Y]] for simulations, if isSim=TRUE, list of Y$Y and Y$Z, the observed data and true groups.
+#' 				if not,  Y is just vector of Observations.
 #'
 #'
 #' @param LineUpBy : currently can be set to 1 or 2. It is only used to rename the FINAL output 
@@ -37,7 +38,7 @@
 #' # if you have an unsteady number of posterior  non-empty groups:
 #' #subset posterior samples first by this then unswitch.
 
-        QuickSwitch_allPars<-function(GibbResult,isSim=TRUE, LineUpBy=1,PropMin=0.3 ){
+        QuickSwitch_allPars<-function(GibbResult,isSim=TRUE, LineUpBy=1,PropMin=0.1 ){
 			out_trim<-GibbResult;			K<-dim(out_trim$Ps)[2]
 			ifelse(isSim==TRUE, Y<-GibbResult$Y$Y, Y<-GibbResult$Y)
 			

@@ -3,7 +3,7 @@
 \alias{QuickSwitch_allPars}
 \title{Label switch fix for Univariate Normals}
 \usage{
-QuickSwitch_allPars(GibbResult, isSim = TRUE, LineUpBy = 1, PropMin = 0.3)
+QuickSwitch_allPars(GibbResult, isSim = TRUE, LineUpBy = 1, PropMin = 0.1)
 }
 \arguments{
 \item{GibbResult:}{output of Gibbs run in a list
@@ -20,7 +20,8 @@ QuickSwitch_allPars(GibbResult, isSim = TRUE, LineUpBy = 1, PropMin = 0.3)
 
         [[Zs]] estimated component (allocation) for each Y at each iteration (rows=n by columns=Iterations)
 
-        [[Y]] for simulations, list of Y$Y and Y$Z, the observed data and true groups. set Y$Z to NULL if unknown.}
+        [[Y]] for simulations, if isSim=TRUE, list of Y$Y and Y$Z, the observed data and true groups.
+                if not,  Y is just vector of Observations.}
 
 \item{LineUpBy}{: currently can be set to 1 or 2. It is only used to rename the FINAL output
         1: final output will order Components by posterior weight (Z=1 for max(weight),etc)
