@@ -12,7 +12,7 @@ Zagg<-	function(USout){
 		
 			#Pars
 				.par<-melt(USout$Pars, id.vars=c("Iteration", "k"))
-				theta<-aggregate( value~variable+k, mean ,data=.par)
+				theta<-aggregate( value~variable+factor(k), mean ,data=.par)
 	         	K<-max(.par$k)
 			
 						#Pred		
@@ -23,7 +23,8 @@ Zagg<-	function(USout){
 	         		# MSE
          			Zemu<-as.numeric(Zhat)
          			.Mus<-theta$value[theta$variable=="Mu"]
-	         		for ( i in 1:length(Zemu)){Zemu[i]<-.Mus[as.numeric(Zhat[i])]}
+	         		for ( i in 1:length(Zemu)){
+	         			Zemu[i]<-.Mus[as.numeric(Zhat[i])]}
 	         	MSE<-sum((USout$Y-Zemu)^2)
 	         	MAE<-sum(abs(USout$Y-Zemu))
 

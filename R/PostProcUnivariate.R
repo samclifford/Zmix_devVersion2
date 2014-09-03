@@ -49,10 +49,9 @@ PostProcUnivariate<-function( Grun,  Y, prep=10000,LineUp=1,Propmin=0.3, isSim=T
 		PostPredFunk<-function(.GrunK0us=GrunK0us, .Zetc=Zetc){
 			Y<-.GrunK0us$Y
 				n<-length(Y)
+				K<- max(GrunK0us$Pars$k)
+			   .GrunK0us$Pars$k<-factor(.GrunK0us$Pars$k, levels=c(1:max(GrunK0us$Pars$k)))
 				swWeights<- reshape(.GrunK0us$Pars, v.names="P", idvar="Iteration", timevar="k", direction='wide', drop=c("Mu", "Sig"))[,-1]
-				K<-dim(swWeights)[2]
-				K<- max(as.numeric(names(table(.GrunK0us$Pars$k))))
-
 				swMeans<- reshape(.GrunK0us$Pars, v.names="Mu", idvar="Iteration", timevar="k", direction='wide', drop=c("P", "Sig"))[,-1]
 				swVariances<- reshape(.GrunK0us$Pars, v.names="Sig", idvar="Iteration", timevar="k", direction='wide', drop=c("Mu", "P"))[,-1]
 			
@@ -83,7 +82,7 @@ PostProcUnivariate<-function( Grun,  Y, prep=10000,LineUp=1,Propmin=0.3, isSim=T
 				.PosteriorWeight<-.Zetc$theta$value[.Zetc$theta$variable=="P"]
 				.PosteriorVar<-.Zetc$theta$value[.Zetc$theta$variable=="Sig"]
 
-		         	Zemu<-apply( Zemu, c(1,2), function(x) {return(.PosteriorMeans[x])} )
+		         Zemu<-apply( Zemu, c(1,2), function(x) {return(.PosteriorMeans[x])} )
 			        
 					MSPE_dist<-apply((.yrep-Zemu)^2, 1, sum)
 					MAPE_dist<-apply(abs(.yrep-Zemu), 1, sum)

@@ -111,7 +111,8 @@
 
 				Zfixed[,.iter]<-as.numeric(as.character(Znew))
 				# Parameters
-				combinePars<-cbind(.iter,as.numeric(BestOne),  out_trim$Ps[.iter,as.numeric(names(BestOne))],out_trim$Mu[.iter,as.numeric(names(BestOne))], out_trim$Sig[.iter,as.numeric(names(BestOne))] )
+				combinePars<-cbind(.iter,as.numeric(BestOne),  out_trim$Ps[.iter,as.numeric(names(BestOne))],out_trim$Mu[.iter,as.numeric(names(BestOne))], out_trim$Sig[.iter,as.numeric(names(BestOne))] )[order(as.numeric(BestOne), decreasing=FALSE),]
+				
 				#combinePars<-combinePars[BestOne,]  ## CHECK THIS IS RIGHT
 				#combinePars[,2]<-as.numeric(BestOne)
 				AllPars<-rbind(AllPars, combinePars)
