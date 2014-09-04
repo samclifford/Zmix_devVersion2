@@ -96,7 +96,17 @@
 				Candies<-expand.grid(ListCandi)  # each row is a labelling
 				names(Candies)<-row.names(CandiCells)   # RAAAAH
 				}
-				
+
+				namesCandies<-names(Candies)
+				# add catch if no appropriate sep available to check all permutations:				
+				if(class(Candies)=='data.frame'){
+				if  ( max(sapply(apply(Candies, 1, unique), length))<length(row.names(CandiCells))){
+					Candies<- permutations(K)}
+					}else{
+						if  (length(unique(Candies))<length(row.names(CandiCells))){
+					Candies<- permutations(K)}
+					} 
+
 				MinusRefPars<-function(x) 	{ flp<- as.numeric(  row.names(CandiCells)[unlist(Candies[x,])])
 					if(length(unique(flp))<length(flp)) { Inf
 						} else {sum(abs( (refComp	-  c(out_trim$P[.iter,flp], out_trim$Mu[.iter,flp],out_trim$Sig[.iter,flp]))/refComp))	
@@ -106,7 +116,7 @@
 					BestOne<-which.min( sapply(1:dim(Candies)[1] , MinusRefPars))  # find the best perm out of options
 					BestOne<-Candies[BestOne,]
 					} else {BestOne<- Candies }   # chose this one if no comparing needed
-				
+				if(is.null(names(BestOne))) {names(BestOne)<-namesCandies}
 				# REORDER HERE
 				# Allocations
 				#BestOne<-as.numeric(BestOne)
