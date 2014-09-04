@@ -20,7 +20,14 @@ PostPredFunk<-function(.GrunK0us, .Zetc, .Y, .prep , .simlabel){
 				.iters<-sapply(rep(n, .prep), DrawIters)
 								
 				# apply to .iters :   draw Z and do rnorm
-				DrawRepY<-function(x){ .z<-	sample(c(1:K) ,size=1, prob=swWeights[x,]) ;cbind(rnorm(1, swMeans[x, .z], sqrt(swVariances[x, .z] )),.z )}	
+				DrawRepY<-function(x){ 
+
+					if (class(swWeights)=='numeric'){
+					cbind(rnorm(1, swMeans[x], sqrt(swVariances[x] )),1 )
+						}else{
+					.z<-	sample(c(1:K) ,size=1, prob=swWeights[x,]) 
+					cbind(rnorm(1, swMeans[x, .z], sqrt(swVariances[x, .z] )),.z )}	}
+				
 				.yzrep<-sapply(.iters, DrawRepY)
 				.yrep<-matrix(.yzrep[1,],nrow=.prep, byrow=T)
 				.zrep<-matrix(.yzrep[2,],nrow=.prep, byrow=T)
