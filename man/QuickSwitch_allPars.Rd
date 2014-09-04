@@ -3,11 +3,10 @@
 \alias{QuickSwitch_allPars}
 \title{Label switch fix for Univariate Normals}
 \usage{
-QuickSwitch_allPars(GibbResult, mydata = YZ, isSim = TRUE, LineUpBy = 1,
-  PropMin = 0.1)
+QuickSwitch_allPars(out_trim, isSim = TRUE, LineUpBy = 1, PropMin = 0.1)
 }
 \arguments{
-\item{GibbResult:}{output of Gibbs run in a list
+\item{out_trim:}{output of Gibbs run in a list
 
         [[Mu]] matrix of mu samples  (rows=iterations, columns  = components),
 
@@ -42,7 +41,7 @@ This function draws samples from a Wishart dist
 # requires a constant number of non-empty groups in samples,
 # but this can be smaller than the number of components fitted.
 # if you have an unsteady number of posterior  non-empty groups:
-#subset posterior samples first by this then unswitch.
+# subset posterior samples first by this then unswitch.
 }
 \keyword{gaussian}
 \keyword{gibbs}

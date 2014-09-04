@@ -3,7 +3,7 @@
 \alias{PostProcUnivariate}
 \title{PostProcessing function univ}
 \usage{
-PostProcUnivariate(Grun, mydata, prep = 10000, LineUp = 1, Propmin = 0.3,
+PostProcUnivariate(Grun, mydata, prep = 10000, LineUp = 1, Propmin = 0.05,
   isSim = TRUE, simlabel = "sim")
 }
 \arguments{

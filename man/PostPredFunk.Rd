@@ -3,7 +3,7 @@
 \alias{PostPredFunk}
 \title{PostProcessing Predictive function}
 \usage{
-PostPredFunk(.GrunK0us = GrunK0us, .Zetc = Zetc, .Y = Y)
+PostPredFunk(.GrunK0us, .Zetc, .Y, .prep, .simlabel)
 }
 \arguments{
 \item{v}{and s}

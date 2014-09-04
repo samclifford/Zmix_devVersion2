@@ -10,8 +10,9 @@
 
 Zmix_univ_tempered<-function(y, k,iter=5000, EndSize=3000, isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))){
 					
-			ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
-
+			#ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
+				if(isSim==TRUE) {Y<-y$Y
+					}else{ Y<-y}
 				parallelAccept<-function(w1, w2, a1, a2){
 						w1[w1< 1e-200]<-1e-200             # truncate so super small values dont crash everyting
 						w2[w2< 1e-200]<-1e-200
@@ -23,17 +24,17 @@ Zmix_univ_tempered<-function(y, k,iter=5000, EndSize=3000, isSim=TRUE, alphas= c
 						Ax<-sample(c(1,0), 1, prob=c(MH,1-MH))
 						return(Ax)}
 						
-				trimit<-function(Out=Out, nEnd=EndSize){
-						yo<-length(Out$Bigmu)                                       #number of chains
-						nmax<-length(Out$Loglike)
-						mu<-Out$Bigmu[[yo]][c(nmax-nEnd+1):nmax,]    
-						sig<-Out$Bigsigma[[yo]][c(nmax-nEnd+1):nmax,]
-						ps<-Out$Bigp[[yo]][c(nmax-nEnd+1):nmax,]
-						Loglike<-Out$Loglike[c(nmax-nEnd+1):nmax]
-						zs<-Out$Zs[[yo]][,c(nmax-nEnd+1):nmax]
-						SteadyScore<-Out$SteadyScore$K0[c(nmax-nEnd+1):nmax]
-						list(Mu = mu,Sig=sig, Ps = ps, Loglike=Loglike, SteadyScore=SteadyScore, Zs=zs, YZ=Out$y)	
-						}
+				#trimit<-function(Out, nEnd){
+				#		yo<-length(Out$Bigmu)                                       #number of chains
+				#		nmax<-length(Out$Loglike)
+				#		mu<-Out$Bigmu[[yo]][c(nmax-nEnd+1):nmax,]    
+				#		sig<-Out$Bigsigma[[yo]][c(nmax-nEnd+1):nmax,]
+				#		ps<-Out$Bigp[[yo]][c(nmax-nEnd+1):nmax,]
+				#		Loglike<-Out$Loglike[c(nmax-nEnd+1):nmax]
+				#		zs<-Out$Zs[[yo]][,c(nmax-nEnd+1):nmax]
+				#		SteadyScore<-Out$SteadyScore$K0[c(nmax-nEnd+1):nmax]
+				#		return(list(Mu = mu,Sig=sig, Ps = ps, Loglike=Loglike, SteadyScore=SteadyScore, Zs=zs, YZ=Out$y))	
+					#	}
 		
 						
 					nCh<-length(alphas)
@@ -246,9 +247,9 @@ Zmix_univ_tempered<-function(y, k,iter=5000, EndSize=3000, isSim=TRUE, alphas= c
 					close(pb)
 					#SteadyScore<-unlist(lapply(apply(ZSaved[[nCh]], 2, table), length))
 					BigRes<-list(Bigmu = Bigmu, Bigsigma=Bigsigma, Bigp = Bigp, Loglike=Loglike, Zs=ZSaved, YZ=y, SteadyScore=SteadyScore,TrackParallelTemp=TrackParallelTemp)	
-					SmallRes<-trimit(BigRes,  nEnd=EndSize)
-
-					return(SmallRes)	
+					#SmallRes<-trimit(BigRes,  nEnd=EndSize)
+					#return(SmallRes)	
+					return(BigRes)	
 					}
 
 

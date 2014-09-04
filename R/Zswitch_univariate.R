@@ -1,7 +1,7 @@
 #' Label switch fix for Univariate Normals 
 #'
 #' This function draws samples from a Wishart dist
-#' @param GibbResult: output of Gibbs run in a list
+#' @param out_trim: output of Gibbs run in a list
 #' 
 #' 		[[Mu]] matrix of mu samples  (rows=iterations, columns  = components), 
 #'
@@ -36,12 +36,13 @@
 #' # requires a constant number of non-empty groups in samples,
 #' # but this can be smaller than the number of components fitted.
 #' # if you have an unsteady number of posterior  non-empty groups:
-#' #subset posterior samples first by this then unswitch.
+#' # subset posterior samples first by this then unswitch.
 
-        QuickSwitch_allPars<-function(GibbResult, mydata=YZ, isSim=TRUE, LineUpBy=1,PropMin=0.1 ){
-			out_trim<-GibbResult;			K<-dim(out_trim$Ps)[2]
+
+	QuickSwitch_allPars<-function(out_trim, isSim=TRUE, LineUpBy=1,PropMin=0.1 ){
+			K<-dim(out_trim$Ps)[2]
 			
-			ifelse(isSim==TRUE, Y<-mydata$Y, Y<-mydata)
+			#ifelse(isSim==TRUE, Y<-mydata$Y, Y<-mydata)
 			
 			# Pick Reference = Max log Likelihood
 			wml<-which.max(out_trim$Loglike)
@@ -97,7 +98,7 @@
 				}
 				
 				MinusRefPars<-function(x) 	{ flp<- as.numeric(  row.names(CandiCells)[unlist(Candies[x,])])
-					if(length(unique(flp))<length(flp)) {Inf
+					if(length(unique(flp))<length(flp)) { Inf
 						} else {sum(abs( (refComp	-  c(out_trim$P[.iter,flp], out_trim$Mu[.iter,flp],out_trim$Sig[.iter,flp]))/refComp))	
 						}}
 											
@@ -135,8 +136,8 @@
 			Zhat<- factor( apply(t(Zfixed), 2,maxZ))
 			levels(Zhat)<- levels(Zhat)<-as.character(BestOne)
 
-			ifelse(isSim==TRUE, RAND<-sum(mydata$Z==Zhat)/length(Zhat)*100, RAND<-'NA')    
+			#ifelse(isSim==TRUE, RAND<-sum(mydata$Z==Zhat)/length(Zhat)*100, RAND<-'NA')    
 
-			return(list('Pars'=AllPars, 'Zs'=Zfixed,  'SteadyScore'=out_trim$SteadyScore, 'RAND'=RAND, "Y"=mydata))
+			return(list('Pars'=AllPars, 'Zs'=Zfixed,  'SteadyScore'=out_trim$SteadyScore))
 			}
 		

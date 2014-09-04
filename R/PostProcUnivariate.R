@@ -8,7 +8,7 @@
 #' #nope
 
 
-PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.3, isSim=TRUE, simlabel="sim"){
+PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.05, isSim=TRUE, simlabel="sim"){
 		
 		ifelse(isSim==TRUE, Y<-mydata$Y, Y<-mydata)
 
@@ -22,10 +22,10 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.3, is
 		p_vals<-data.frame("K0"=K0, "PropIters"=as.numeric(table(Grun$SteadyScore))/dim(Grun$Ps)[1],
 			"RAND"=NA, "MAE"=NA, "MSE"=NA,"Pmin"=NA, "Pmax"=NA, "Concordance"=NA, "MAPE"=NA, "MSPE"=NA)
 						
-		GrunK0<-Grun
+		
 		#for each K0:
 		for ( .K0 in 1:length(K0)){
-
+		GrunK0<-Grun
 		# split data by K0
 		.iterK0<-c(1:dim(Grun$Ps)[1])[Grun$SteadyScore==K0[.K0]]
 		GrunK0$Mu<-	Grun$Mu[.iterK0,]
@@ -36,10 +36,19 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.3, is
 		GrunK0$SteadyScore<-	Grun$SteadyScore[.iterK0]
 
 		## 2. unswitch
-		GrunK0us<-QuickSwitch_allPars(GrunK0, mydata=mydata, isSim=isSim, LineUpBy=LineUp,PropMin=Propmin )
+		GrunK0us<-QuickSwitch_allPars(GrunK0, isSim, LineUp,Propmin )
 
 		## 3. RAND, MSE
-		p_vals$RAND[.K0]<- GrunK0us$RAND
+		#ifelse(isSim==TRUE, p_vals$RAND[.K0]<-(sum(mydata$Z==GrunK0us$Zfixed)/n)*100, p_vals$RAND[.K0]<-'NA')    
+		
+		if(isSim==TRUE){
+			maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
+			Zhat<- factor( apply(t(GrunK0us$Zs), 2,maxZ))
+			p_vals$RAND[.K0]<-(sum(mydata$Z==Zhat)/n)*100
+						} else { p_vals$RAND[.K0]<-'NA'}
+	
+	#p_vals$RAND[.K0]<- GrunK0us$RAND
+
 		Zetc<-Zagg(GrunK0us, Y)
 		p_vals$MAE[.K0]<- Zetc$MAE
 		p_vals$MSE[.K0]<- Zetc$MSE
@@ -47,7 +56,7 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.3, is
 
 		## 4. Predict replicates
 		
-		postPredTests<-PostPredFunk( GrunK0us,Zetc, Y)
+		postPredTests<-PostPredFunk( GrunK0us,Zetc, Y, prep, simlabel)
 		# store output in p_vasl
 		p_vals$Pmin[.K0]<-postPredTests$MinP
 		p_vals$Pmax[.K0]<-postPredTests$MaxP
