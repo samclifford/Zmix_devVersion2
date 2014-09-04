@@ -22,7 +22,7 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.05, i
 		p_vals<-data.frame("K0"=K0, "PropIters"=as.numeric(table(Grun$SteadyScore))/dim(Grun$Ps)[1],
 			"RAND"=NA, "MAE"=NA, "MSE"=NA,"Pmin"=NA, "Pmax"=NA, "Concordance"=NA, "MAPE"=NA, "MSPE"=NA)
 						
-		
+		K0estimates<-vector("list", length(K0))
 		#for each K0:
 		for ( .K0 in 1:length(K0)){
 		GrunK0<-Grun
@@ -53,6 +53,7 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.05, i
 		p_vals$MAE[.K0]<- Zetc$MAE
 		p_vals$MSE[.K0]<- Zetc$MSE
 
+		K0estimates[[.K0]]<-cbind(Zetc$theta, "K0"=K0[.K0])
 
 		## 4. Predict replicates
 		
@@ -65,5 +66,5 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.05, i
 		p_vals$Concordance[.K0]<-postPredTests$Concordance
 
 		}
-		return(p_vals)
+		return(list(p_vals, K0estimates))
 		}
