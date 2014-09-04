@@ -60,7 +60,7 @@ sim1func<-function(n){
 #' @examples
 #' #nope
 sim5func<-function(n){
-			S5<-list(mu = c(6,10, 20),sig=c(1,1,0.5),p=c( 0.39,0.6,0.01),k=3) 
+			S5<-list(mu = c(6,10, 20),sig=c(1,1,0.5),p=c(0.6, 0.39,0.01),k=3) 
 			simudZ(mu=S5$mu, sig=S5$sig, n=n, p=S5$p, k=S5$k) }
 
 
