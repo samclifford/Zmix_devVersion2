@@ -17,7 +17,7 @@ getBF<-function(mydata, alpha=10, Krange=c(1:10)){
 	Data1<-list(y=matrix(mydata))
 	#pick likely grid point
 
-	km<-kmeans(sim1_n100$Y, max(Krange))
+	km<-kmeans(Data1$y, max(Krange))
 	grd<-matrix(km$centers[which.max(km$size),1])
 	#grd<-matrix( mean(Data1$y))
 	
