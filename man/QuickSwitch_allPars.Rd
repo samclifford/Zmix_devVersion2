@@ -3,10 +3,12 @@
 \alias{QuickSwitch_allPars}
 \title{Label switch fix for Univariate Normals}
 \usage{
-QuickSwitch_allPars(out_trim, isSim = TRUE, LineUpBy = 1, PropMin = 0.1)
+QuickSwitch_allPars(out_trim, LineUpBy = 1, PropMin = 0.1)
 }
 \arguments{
-\item{out_trim:}{output of Gibbs run in a list
+\item{out_trim:}{LIST of output of Gibbs sampler with the following components:
+
+        [[Zs]] estimated component (allocation) for each Y at each iteration (rows=n by columns=Iterations)
 
         [[Mu]] matrix of mu samples  (rows=iterations, columns  = components),
 
@@ -14,14 +16,9 @@ QuickSwitch_allPars(out_trim, isSim = TRUE, LineUpBy = 1, PropMin = 0.1)
 
         [Ps]] matrix weights
 
-        [[Loglike]] Loglikelihood (vector length of iterations)
+        [[Loglike]] Loglikelihood (vector the length of iterations). Change if needed, currently used to find reference iteration (max(loglikelihood)).
 
-        [[SteadyScore]] vector of number of non-empty groups at each iteration  (SET to NULL if not computed, not important here)
-
-        [[Zs]] estimated component (allocation) for each Y at each iteration (rows=n by columns=Iterations)
-
-        [[Y]] for simulations, if isSim=TRUE, list of Y$Y and Y$Z, the observed data and true groups.
-                if not,  Y is just vector of Observations.}
+        [[SteadyScore]] vector of number of non-empty groups at each iteration  (Not important, ok if not there)}
 
 \item{LineUpBy}{: currently can be set to 1 or 2. It is only used to rename the FINAL output
         1: final output will order Components by posterior weight (Z=1 for max(weight),etc)
@@ -29,19 +26,37 @@ QuickSwitch_allPars(out_trim, isSim = TRUE, LineUpBy = 1, PropMin = 0.1)
     Again, note this doesnt affect the actualy unswitching, which uses no ordering. it simply relabels the reference groups according to chosen parameter to nice output.}
 
 \item{PropMin}{= Minimum allowable proportion of a group required to activate second level check.,
-    Usually 0.3 sufficient.
-    Smaller values increase time function takes, but are needed for Smaller samples or very close components (try 0.1)
-If function gives error, this is first thing to try (make it smaller)}
+        Usually 0.1 sufficient.
+        Smaller values increase time function takes, but are needed for Smaller samples or very close components (try 0.05)
+    If function gives error, this is first thing to try (make it smaller)}
 }
 \description{
-This function draws samples from a Wishart dist
+This function fixes the label switching in the output of a univariate Gibbs sampler. Requires a constant number of non-empty groups in samples, but can deal with empty groups.
 }
 \examples{
-#sorry, none yet
-# requires a constant number of non-empty groups in samples,
-# but this can be smaller than the number of components fitted.
+#
 # if you have an unsteady number of posterior  non-empty groups:
 # subset posterior samples first by this then unswitch.
+
+# Simple example:
+
+
+set.seed(88); library(ggplot2)
+# Make simple mixture dataset,
+	dat1<-c(rnorm(50, mean=1), rnorm(100, mean=5))
+# Run gibbs sampler of choice
+ run1<-Zmix_univ_tempered(dat1,isSim=FALSE,  iter=1000, k=10, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30))))
+	run1<- trimit(run1, nEnd=500) # trim
+	K0<-as.numeric(names(table(run1$SteadyScore))) # check out number of non-empty groups in iterations, if available
+
+ # Undo the LABEL SWITCHING
+	runUS<-QuickSwitch_allPars(GrunK2, LineUpBy=1,PropMin=0.1 )
+
+ # Check out results
+	p1<-ggplot(data=runUS$Pars, aes(x=Iteration, y=P, group=factor(k), colour=factor(k))) + geom_line() + geom_point()+ggtitle("Unswitched Weights")
+	p2<-ggplot(data=runUS$Pars, aes(x=Iteration, y=Mu, group=factor(k), colour=factor(k))) + geom_line() + geom_point()+ggtitle("Means")
+	p3<-ggplot(data=runUS$Pars, aes(x=Iteration, y=Sig, group=factor(k), colour=factor(k))) + geom_line() + geom_point()+ggtitle("Variance")
+	multiplot(p1,p2,p3)
 }
 \keyword{gaussian}
 \keyword{gibbs}
