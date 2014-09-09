@@ -36,7 +36,7 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.05, i
 		GrunK0$SteadyScore<-	Grun$SteadyScore[.iterK0]
 
 		## 2. unswitch
-		GrunK0us<-QuickSwitch_allPars(GrunK0, isSim, LineUp,Propmin )
+		GrunK0us<-QuickSwitch_allPars(GrunK0, LineUp,Propmin )
 
 		## 3. RAND, MSE
 		#ifelse(isSim==TRUE, p_vals$RAND[.K0]<-(sum(mydata$Z==GrunK0us$Zfixed)/n)*100, p_vals$RAND[.K0]<-'NA')    
