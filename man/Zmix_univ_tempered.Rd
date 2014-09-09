@@ -7,7 +7,7 @@ Zmix_univ_tempered(y, k, iter = 5000, isSim = TRUE, alphas = c(30, 20, 10,
   5, 3, 1, 0.5, 1/2^(c(2, 3, 4, 5, 6, 8, 10, 15, 20, 30))))
 }
 \arguments{
-\item{put}{stuff here}
+\item{y,}{k,iter, isSim=TRUE, alphas=}
 }
 \description{
 This function ...
@@ -15,5 +15,14 @@ This function ...
 \examples{
 #... you know...
 }
-\keyword{Wishart}
+\keyword{Gibbs}
+\keyword{estimation}
+\keyword{gaussian,}
+\keyword{mixture,}
+\keyword{normal,}
+\keyword{order}
+\keyword{parallel}
+\keyword{sampler,}
+\keyword{tempering,}
+\keyword{univariate,}
 
