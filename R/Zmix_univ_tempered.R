@@ -2,8 +2,8 @@
 #' Run Gibbs sampler with prior tempering 
 #'
 #' This function ...
-#' @param put stuff here
-#' @keywords Wishart
+#' @param y, k,iter, isSim=TRUE, alphas=
+#' @keywords Gibbs sampler, univariate, normal, gaussian, mixture, parallel tempering, order estimation 
 #' @export
 #' @examples
 #' #... you know...
@@ -128,7 +128,8 @@ Zmix_univ_tempered<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 
 			                                                                                                          # Log Likelihood: # Sum-n (log Sum-K ( weights x dnorm (y,thetas))) 
 					for (i in 1:n){
 					non0id<-c(1:k)[ns > 0]
-					Loglike[j]<-Loglike[j]+ log( sum( Bigp[[nCh]][j,non0id]*dnorm(Y[i], mean=Bigmu[[nCh]][j,non0id], sd=sqrt(Bigsigma[[nCh]][j,non0id]))))}
+					Loglike[j]<-Loglike[j]+ log(
+						 sum( Bigp[[nCh]][j,non0id]*dnorm(Y[i], mean=Bigmu[[nCh]][j,non0id], sd=sqrt(Bigsigma[[nCh]][j,non0id]))))}
 					
 			                                                                                                          ### now finish loop for j>2
 					
