@@ -64,3 +64,19 @@ sim5func<-function(n){
 			simudZ(mu=S5$mu, sig=S5$sig, n=n, p=S5$p, k=S5$k) }
 
 
+#' Sim 6 function
+#'
+#' This function draws samples from a simulation
+#' @param n
+#' @keywords simulation
+#' @export
+#' @examples
+#' #nope
+sim6func<-function(n){
+			S6<-list(mu = c(1, 7, 15),sig=c(1, 1, 1),p=c(0.2,  0.3, 0.4),k=3) 
+			simudZ(mu=S6$mu, sig=S6$sig, n=n, p=S6$p, k=S6$k) }
+
+
+sim6func<-function(n){
+			S6<-list(mu = c(15, 7, 1),sig=c(1, 1, 1),p=c(0.4,  0.3, 0.2),k=3) 
+			simudZ(mu=S6$mu, sig=S6$sig, n=n, p=S6$p, k=S6$k) }
