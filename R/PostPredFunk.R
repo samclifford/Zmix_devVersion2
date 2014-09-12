@@ -64,7 +64,7 @@ PostPredFunk<-function(.GrunK0us, .Zetc, .Y, .prep , .simlabel){
 				geom_density(color="red", size=2)
 				predplot<-predplot+ggtitle(paste(.simlabel, " Components = ", K))
 								
-				ggsave(plot=predplot, filename= paste("PredictiveDensities_",.simlabel,"_K0",K,".pdf", sep="") ,width=10, height=10, units='cm' )
+				ggsave(plot=predplot, filename= paste("PredictiveDensities_",.simlabel,"_K0",K,".bmp", sep="") ,width=10, height=10, units='cm' )
 
 				#ggsave(plot=predplot, filename= paste("PredictiveDensities_",.simlabel,"_K0",K,".bmp", sep="") )
 				
