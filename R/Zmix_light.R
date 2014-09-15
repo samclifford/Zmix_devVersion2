@@ -134,8 +134,8 @@ Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1,
 					Sys.sleep(0.01)
 					setTxtProgressBar(pb, j)
 					if(j %% 10==0){
-					par(mfrow=c(1,3))
-					plot(SteadyScore$K0~SteadyScore$Iteration, main='#non-empty groups', type='l')
+					par(mfrow=c(1,2))
+					#plot(SteadyScore$K0~SteadyScore$Iteration, main='#non-empty groups', type='l')
 					ts.plot(Bigp[[nCh]], main='Weights from target posterior', col=rainbow(k))
 					ts.plot(TrackParallelTemp[,c(nCh:1)], main='Track Parallel Tempering', col=rainbow(nCh))
 					#ts.plot(Bigmu[[nCh]], main='emptying Mu', col=rainbow(k))
@@ -183,6 +183,8 @@ Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1,
 			                                                                                                          #mapmu<-prod(dnorm(Bigmu[[.ch]][j,], mean=lambda, sd=(Bigsigma[[.ch]][j,]/tau) ))
 			                                                                                                          #mapsig<- prod(dinvgamma(Bigsigma[[.ch]][j,], a,b))
 			                                                                                                          #map[j,]<-prod(mapy[j,], mapmu, mapsig)}
+					# COUNT NON EMPTY
+					K0Final[ j, .ch]<-sum(table(ZSaved[[.ch]][,j])>0)
 					}
 			           #new                                                                                               #### PARALLEL TEMPERING MOVES ###
 					 if(j>1) {TrackParallelTemp[j,]<-TrackParallelTemp[j-1,]}      # SET para chains to previous values                                                                                           # how often??? lets go with probability 10% of switching at any time
@@ -229,17 +231,16 @@ Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1,
 			                                                                                                          #logLikelihood
 					for (i in 1:n){
 					non0id<-c(1:k)[ns > 0]
-					Loglike[j]<-Loglike[j]+ log( sum( Bigp[[nCh]][j,non0id]*dnorm(Y[i], mean=Bigmu[[nCh]][j,non0id], sd=sqrt(Bigsigma[[nCh]][j,non0id]))))}	
-
-					K0Final[ j, .ch]<-sum(table(ZSaved[[.ch]][,j])>0)
+					Loglike[j]<-Loglike[j]+ log( sum( Bigp[[nCh]][j,non0id]*dnorm(Y[i], mean=Bigmu[[nCh]][j,non0id], sd=sqrt(Bigsigma[[nCh]][j,non0id]))))}
+					
 
 					}
 					
 					# trim out first 300
-					colnames(K0Final)<-alphas
-					K0Final<-K0Final[ -c(1:300),]
+					colnames(K0Final)<-c(1:length(alphas))
+					K0Final<-K0Final[ -1:-300, ]
 					K0Final<-melt(K0Final)
-					names(K0Final)<-c("Alpha", "K0")
+					names(K0Final)<-c("Iteration", "Alpha", "K0")
 
 
 					close(pb)
