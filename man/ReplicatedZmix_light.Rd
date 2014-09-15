@@ -16,7 +16,6 @@ dDirichlet(c(.1, .9), c(0.1,0.1))
 
 
  go<- ReplicatedZmix_light(3, 1, 20, K=5, iter=400)
-'
 }
 \keyword{dirichlet}
 
