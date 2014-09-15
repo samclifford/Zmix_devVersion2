@@ -1,6 +1,6 @@
- #' A dDirichlet Function
+ #' A replicated  Function
 #'
-#' density of dirichlet
+#' ...
 #' @param x, alpha, log=False
 #' @keywords dirichlet
 #' @export
