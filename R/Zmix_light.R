@@ -239,8 +239,8 @@ Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1,
 					# trim out first 300
 					colnames(K0Final)<-c(1:length(alphas))
 					K0Final<-K0Final[ -1:-300, ]
-					K0Final<-melt(K0Final)
-					names(K0Final)<-c("Iteration", "Alpha", "K0")
+					#K0Final<-melt(K0Final)
+					#names(K0Final)<-c("Iteration", "Alpha", "K0")
 
 
 					close(pb)
