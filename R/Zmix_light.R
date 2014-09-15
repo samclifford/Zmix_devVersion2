@@ -244,7 +244,7 @@ Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1,
 
 
 					close(pb)
-					return(list(K0Final,  y)	)
+					return(K0Final)
 			
 					}
 

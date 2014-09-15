@@ -77,3 +77,22 @@ sim5func<-function(n){
 sim6func<-function(n){
 			S6<-list(mu = c(15, 7, 1),sig=c(1, 1, 1),p=c(0.4,  0.3, 0.2),k=3) 
 			simudZ(mu=S6$mu, sig=S6$sig, n=n, p=S6$p, k=S6$k) }
+
+
+
+#' Sim Big func
+#'
+#' This function ...
+#' @param n
+#' @keywords simulation
+#' @export
+#' @examples
+#' #nope
+
+
+simMe<-function(whichOne=1, n){
+	if(whichOne==1) return(sim6func(n))
+	if(whichOne==2) return(sim1func(n))
+	if(whichOne==3) return(sim2func(n))
+	if(whichOne==4) return(sim5func(n))
+}
