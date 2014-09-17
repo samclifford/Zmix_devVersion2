@@ -1,4 +1,3 @@
- 
 #' Run Gibbs sampler with prior tempering 
 #'
 #' This function ...
@@ -8,7 +7,7 @@
 #' @examples
 #' #... you know...
 
-Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))){
+Zmix_lightLYRA<-function(y, k,iter=5000,  isSim=TRUE,burn=300, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))){
 					
 			#ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
 				if(isSim==TRUE) {Y<-y$Y
@@ -129,20 +128,6 @@ Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1,
 					
 					
 					for (j in 2:iter){
-					  
-
-					if(j %% 50==0){
-					Sys.sleep(0.01)
-					setTxtProgressBar(pb, j)
-					#if(j %% 10==0){
-					#par(mfrow=c(1,2))
-					#plot(SteadyScore$K0~SteadyScore$Iteration, main='#non-empty groups', type='l')
-					#ts.plot(Bigp[[nCh]], main='Weights from target posterior', col=rainbow(k))
-					#ts.plot(TrackParallelTemp[,c(nCh:1)], main='Track Parallel Tempering', col=rainbow(nCh))
-					#ts.plot(Bigmu[[nCh]], main='emptying Mu', col=rainbow(k))
-					#image(ZSaved[[nCh]][order(Y),], col=rainbow(K), main="Allocations")
-					}
-					
 					for (.ch in 1:nCh){
 			                                                                                                          #################
 					
@@ -191,7 +176,7 @@ Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1,
 					 if(j>1) {TrackParallelTemp[j,]<-TrackParallelTemp[j-1,]}      # SET para chains to previous values                                                                                           # how often??? lets go with probability 10% of switching at any time
 					
 					if(j>20){
-					if( sample(c(1,0),1, 0.9)==1){		# FREQ OF TEMPERING! 
+					if( sample(c(1,0),1, 0.33)==1){		# FREQ OF TEMPERING! 
 			                                                                                                          #Pick chains, just chose one and the one next to it
 					Chain1<-sample( 1:(nCh-1), 1)   
 					Chain2<-Chain1+1
@@ -239,12 +224,10 @@ Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1,
 					
 					# trim out first 300
 					colnames(K0Final)<-c(1:length(alphas))
-					K0Final<-K0Final[ -1:-300, ]
-					#K0Final<-melt(K0Final)
-					#names(K0Final)<-c("Iteration", "Alpha", "K0")
+					K0Final<-K0Final[ -1:-burn, ]
+		
 
 
-					close(pb)
 					return(K0Final)
 			
 					}
