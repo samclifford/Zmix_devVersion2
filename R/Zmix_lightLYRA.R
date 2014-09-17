@@ -7,7 +7,7 @@
 #' @examples
 #' #... you know...
 
-Zmix_lightLYRA<-function(y, k,iter=20000,  isSim=TRUE,burn=5000, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6,7, 8, 10, 12, 15, 20, 30)))){
+Zmix_lightLYRA<-function(y, k=10,iter=20000,  isSim=TRUE,burn=5000, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6,7, 8, 10, 12, 15, 20, 30)))){
 					
 			#ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
 				if(isSim==TRUE) {Y<-y$Y
@@ -179,10 +179,7 @@ Zmix_lightLYRA<-function(y, k,iter=20000,  isSim=TRUE,burn=5000, alphas= c(30, 2
 			                                                                                                          #Pick chains, just chose one and the one next to it
 					Chain1<-sample( 1:(nCh-1), 1)   
 					Chain2<-Chain1+1
-			       ## allow non-adjacent chains
-					#Chain1<-sample( c(1:nCh), 1)   
-					#Chain2<-sample(c(1:nCh)[c(1:nCh)!=Chain1],1)
-			                                                                                                         # check ratio
+	                                                    # check ratio
 					MHratio<- parallelAccept(Bigp[[Chain1]][j,], Bigp[[Chain2]][j,], rep(alphas[Chain1],k), rep(alphas[Chain2],k))
 					if (MHratio==1){                                                                                  # switch the chains (weights, mean, sigma, Zs)
 			             #new
