@@ -15,6 +15,7 @@
 	require('parallel')
  	# REPLICATE y samples
  	dtc<-detectCores()
+ 	print(paste ( "Using ",dtc, " Cores"))
 	yrep<-lapply(rep(n, NumRep),  function(x) simMe( sim, x))
  	#zmixRun<-lapply(yrep, function(x){   Zmix_lightLYRA(x, K,...)} )
  	zmixRun<-mclapply(yrep, Zmix_lightLYRA, dtc) 
