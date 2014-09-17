@@ -3,7 +3,7 @@
 \alias{ReplicatedZmix_lightLYRA}
 \title{A replicated  Function}
 \usage{
-ReplicatedZmix_lightLYRA(NumRep, sim, n, K = 10, ...)
+ReplicatedZmix_lightLYRA(NumRep, sim, n, K = 10, mylabels = "trial", ...)
 }
 \arguments{
 \item{x,}{alpha, log=False}

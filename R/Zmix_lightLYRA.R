@@ -43,7 +43,6 @@ Zmix_lightLYRA<-function(y, k,iter=5000,  isSim=TRUE,burn=300, alphas= c(30, 20,
 					n <-length(Y) 
 					a=2.5; b<-0.5*var(Y);d<-2
 					lambda<-sum(Y)/n  ;
-					pb <- txtProgressBar(min = 0, max = iter, style = 3)
 					
 			                                                                                                          # 2. set up matrices for parameters which will be saved
 					map =    matrix(0,nrow = iter, ncol = 1)
@@ -215,21 +214,21 @@ Zmix_lightLYRA<-function(y, k,iter=5000,  isSim=TRUE,burn=300, alphas= c(30, 20,
 					}		}		}
 					
 			                                                                                                          #logLikelihood
-					for (i in 1:n){
-					non0id<-c(1:k)[ns > 0]
-					Loglike[j]<-Loglike[j]+ log( sum( Bigp[[nCh]][j,non0id]*dnorm(Y[i], mean=Bigmu[[nCh]][j,non0id], sd=sqrt(Bigsigma[[nCh]][j,non0id]))))}
+					#for (i in 1:n){
+					#non0id<-c(1:k)[ns > 0]
+					#Loglike[j]<-Loglike[j]+ log( sum( Bigp[[nCh]][j,non0id]*dnorm(Y[i], mean=Bigmu[[nCh]][j,non0id], sd=sqrt(Bigsigma[[nCh]][j,non0id]))))}
 					
 
 					}
 					
-					# trim out first 300
+					# trim out burn in
 					colnames(K0Final)<-c(1:length(alphas))
 					K0Final<-K0Final[ -1:-burn, ]
-		
+					K0Final<-melt(K0Final)
+					K0Final[,3]<-factor(K0Final[,3], levels=c(1:k))
+					
+					 table(K0Final[,2], K0Final[,3])/(iter-burn)
 
-
-					return(K0Final)
-			
 					}
 
 

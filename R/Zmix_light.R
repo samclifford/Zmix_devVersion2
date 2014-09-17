@@ -8,7 +8,7 @@
 #' @examples
 #' #... you know...
 
-Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))){
+Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, burn=300, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))){
 					
 			#ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
 				if(isSim==TRUE) {Y<-y$Y
@@ -239,14 +239,17 @@ Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, alphas= c(30, 20, 10, 5, 3, 1,
 					
 					# trim out first 300
 					colnames(K0Final)<-c(1:length(alphas))
-					K0Final<-K0Final[ -1:-300, ]
+					K0Final<-K0Final[ -1:-burn, ]
 					#K0Final<-melt(K0Final)
 					#names(K0Final)<-c("Iteration", "Alpha", "K0")
+					K0Final<-melt(K0Final)
 
-
+					
 					close(pb)
-					return(K0Final)
-			
+					#return(K0Final)
+					K0Final[,3]<-factor(K0Final[,3], levels=c(1:k))
+					 table(K0Final[,2], K0Final[,3])/(iter-burn)
+
 					}
 
 
