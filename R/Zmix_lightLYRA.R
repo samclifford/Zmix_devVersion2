@@ -7,7 +7,7 @@
 #' @examples
 #' #... you know...
 
-Zmix_lightLYRA<-function(y, k,iter=5000,  isSim=TRUE,burn=300, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))){
+Zmix_lightLYRA<-function(y, k,iter=20000,  isSim=TRUE,burn=5000, alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6,7, 8, 10, 12, 15, 20, 30)))){
 					
 			#ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
 				if(isSim==TRUE) {Y<-y$Y
