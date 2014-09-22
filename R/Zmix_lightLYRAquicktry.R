@@ -13,7 +13,7 @@ Zmix_lightLYRAquicktry<-function(Y){
 				 iter=1000
 				 burn=iter/10
 				 alphas= c(10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6,7, 8, 10, 12, 15, 20, 30)))
-			#ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
+			ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
 				
 			print(Y)
 				parallelAccept<-function(w1, w2, a1, a2){
