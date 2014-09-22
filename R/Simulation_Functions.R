@@ -95,4 +95,19 @@ simMe<-function(whichOne=1, n){
 	if(whichOne==2) return(sim1func(n))
 	if(whichOne==3) return(sim2func(n))
 	if(whichOne==4) return(sim5func(n))
+	if(whichOne==5) return(sim2EASYfunc(n))
 }
+
+
+
+#' Sim 2 k EASY
+#'
+#' This function draws samples from a simulation
+#' @param n
+#' @keywords simulation
+#' @export
+#' @examples
+#' #nope			
+		sim2EASYfunc<-function(n){
+			S2<-list(mu = c(-5,5),sig=c(1,2),p=c(0.6,0.4),k=2) 
+			simudZ(mu=S2$mu, sig=S2$sig, n=n, p=S2$p, k=S2$k)  }

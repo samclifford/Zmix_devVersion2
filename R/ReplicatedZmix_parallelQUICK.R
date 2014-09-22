@@ -11,14 +11,14 @@
 #'
 #'
 #'
- ReplicatedZmix_parallel<-function (NumRep,  sim , n, mylabels="trial", ...) {
+ ReplicatedZmix_parallelQUICK<-function (NumRep,  sim , n, mylabels="trial", ...) {
 	require('parallel')
  	# REPLICATE y samples
  	dtc<-detectCores()
  	print(paste ( "Using ",dtc, " Cores"))
 	yrep<-lapply(rep(n, NumRep),  function(x) simMe( sim, x))
  	#zmixRun<-lapply(yrep, function(x){   Zmix_lightLYRA(x, K,...)} )
- 	zmixRun<-mclapply(yrep, Zmix_lightLYRA, mc.cores=dtc) 
+ 	zmixRun<-mclapply(yrep, Zmix_lightLYRAquicktry, mc.cores=dtc) 
  	
  	docall<-do.call(rbind, lapply(zmixRun, melt))
  	K0s<-data.frame(  "Replicate"=rep(1:NumRep, each= dim(docall)[1]/NumRep)  , docall)	
