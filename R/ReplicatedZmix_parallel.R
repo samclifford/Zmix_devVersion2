@@ -18,7 +18,7 @@
  	print(paste ( "Using ",dtc, " Cores"))
 	yrep<-lapply(rep(n, NumRep),  function(x) simMe( sim, x))
  	#zmixRun<-lapply(yrep, function(x){   Zmix_lightLYRA(x, K,...)} )
- 	zmixRun<-mclapply(yrep, FUN=Zmix_lightLYRA, mc.cores=dtc) 
+ 	zmixRun<-mclapply(yrep, FUN=function(x) Zmix_lightLYRA(x), mc.cores=dtc) 
  	
  	docall<-do.call(rbind, lapply(zmixRun, melt))
  	K0s<-data.frame(  "Replicate"=rep(1:NumRep, each= dim(docall)[1]/NumRep)  , docall)	
@@ -28,15 +28,11 @@
 
 	Ymatrix<-matrix(unlist(yrep), nrow=2*NumRep, byrow=TRUE)[seq(1,2*NumRep, by=2),]  # each row is a y
 	Zmatrix<-matrix(unlist(yrep), nrow=2*NumRep, byrow=TRUE)[seq(2,2*NumRep, by=2),]
-
-
-
 		# plots:
 		p <- ggplot(TargetK0, aes(factor(K0), Proportion )) +  geom_boxplot()+xlab("Number of Groups")+ylab("Proportion of iterations")+geom_jitter(position=position_jitter(width=0.01,height=.01), alpha=.3, size=.5)+ coord_flip()
 		ggsave(plot=p, filename= paste("Target_K0",mylabels,".tiff", sep="") ,
 		 width=10, height=10, units='cm' )
-
-
-
-	return(list("TargetK0"=TargetK0, "K0s"=K0s, "Y"=Ymatrix, "Z"=Zmatrix )) }
+	zout<-list("TargetK0"=TargetK0, "K0s"=K0s, "Y"=Ymatrix, "Z"=Zmatrix )
+	save(zout, file =paste(mylabels, "Out.RDATA", sep="")) 
+	}
 	

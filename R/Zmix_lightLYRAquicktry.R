@@ -7,7 +7,7 @@
 #' @examples
 #' #... you know...
 
-Zmix_lightLYRAquicktry<-function(Y){
+Zmix_lightLYRAquicktry<-function(y){
 				 isSim=TRUE	
 				 k=5
 				 iter=1000
@@ -27,43 +27,37 @@ Zmix_lightLYRAquicktry<-function(Y){
 						Ax<-sample(c(1,0), 1, prob=c(MH,1-MH))
 						return(Ax)}
 						
-		
-						
-					nCh<-length(alphas)
-					TrackParallelTemp<-matrix(nrow=iter, ncol=nCh)
-					TrackParallelTemp[1,]<-c(1:nCh)
+				nCh<-length(alphas)
+				TrackParallelTemp<-matrix(nrow=iter, ncol=nCh)
+				TrackParallelTemp[1,]<-c(1:nCh)
 					
 			
-					tau=1
-					n <-length(Y) 
-					a=2.5;b=2/var(Y)
-					d<-2
-					lambda=sum(Y)/n  
-			                                                                                                          # 1. set up priors
-					#mux<-list(mu=seq(from=min(Y), to=max(Y),length.out=k),sigma=rep(100, k),p=rep(1/k,k), k=k)
-					mux<-list(mu=seq(from=min(Y), to=max(Y),length.out=k),sigma=rep(1, k),p=rep(1/k,k), k=k)
+				tau=1
+				n <-length(Y) 
+				a=2.5;b=2/var(Y)
+				d<-2
+				lambda=sum(Y)/n  
+			               # 1. set up priors
+				mux<-list(mu=seq(from=min(Y), to=max(Y),length.out=k),sigma=rep(1, k),p=rep(1/k,k), k=k)
 					
 
-					n <-length(Y) 
-					a=2.5; b<-0.5*var(Y);d<-2
-					lambda<-sum(Y)/n  ;
-					
-			                                                                                                          # 2. set up matrices for parameters which will be saved
-					map =    matrix(0,nrow = iter, ncol = 1)
-					Loglike =   matrix(0,nrow = iter, ncol = 1)
-					Bigmu = replicate(nCh,  matrix(0,nrow = iter, ncol = k)	, simplify=F)
-					Bigsigma=replicate(nCh,  matrix(0,nrow = iter, ncol = k)	, simplify=F)
-					Bigp =  replicate(nCh,  matrix(0,nrow = iter, ncol = k)	, simplify=F)
-					Pzs =   replicate(nCh,  matrix(0,nrow = n, ncol = k)	, simplify=F)
-					ZSaved=	replicate(nCh,  matrix(0,nrow = n, ncol = iter)	, simplify=F)
-
-
-					## NEW
-					K0Final<-matrix(nrow=iter, ncol=nCh)
+				n <-length(Y) 
+				a=2.5; b<-0.5*var(Y);d<-2
+				lambda<-sum(Y)/n  ;
+				
+				 # 2. set up matrices for parameters which will be saved
+				map =    matrix(0,nrow = iter, ncol = 1)
+				Loglike =   matrix(0,nrow = iter, ncol = 1)
+				Bigmu = replicate(nCh,  matrix(0,nrow = iter, ncol = k)	, simplify=F)
+				Bigsigma=replicate(nCh,  matrix(0,nrow = iter, ncol = k)	, simplify=F)
+				Bigp =  replicate(nCh,  matrix(0,nrow = iter, ncol = k)	, simplify=F)
+				Pzs =   replicate(nCh,  matrix(0,nrow = n, ncol = k)	, simplify=F)
+				ZSaved=	replicate(nCh,  matrix(0,nrow = n, ncol = iter)	, simplify=F)
+				K0Final<-matrix(nrow=iter, ncol=nCh)   ## Number of nonempty groups
 
 
 					
-			                                                                                                          # start chains and  create inits needed for i=1 
+			                    	 # start chains and  create inits needed for i=1 
 					for (.ch in 1:nCh){
 					Bigmu[[.ch]][1,] <- mux$mu                                                                        # initial value of mu's
 					mu0=mux$mu		
@@ -74,29 +68,27 @@ Zmix_lightLYRAquicktry<-function(Y){
 					
 			                                                                                                          #  		initialize chains:  ie. iteration 1:
 					j<-1 
-					
-			                                                                                                          # 1. Generate P(Z[i](t)=j)  for j=1,...,known
-			                                                                                                          # from paper, computing pzs
+
 					for (.ch in 1:nCh){
 					for (i in 1:n) {
 					Pzs[[.ch]][i,]<-(p0/sqrt(sig0))*exp(-((Y[i]-mu0)^2)/(2*sig0))
 			                                                                                                          
-					Pzs[[.ch]][i,]<-Pzs[[.ch]][i,]/sum(Pzs[[.ch]][i,]) }}											  # Scale to equal 1?
+					Pzs[[.ch]][i,]<-Pzs[[.ch]][i,]/sum(Pzs[[.ch]][i,]) }}		  # Scale to equal 1
 					
-			                                                                                                          # 2 Make indicator matrix of assignments based on Pzs
-			                                                                                                          #	sample 1 of the k classes for each row by Pzs (prob)
+			                                 # 2 Make indicator matrix of assignments based on Pzs
+			                                                                                                         
 					for (.ch in 1:nCh){
 					Z<-matrix()
-					for (i in 1:n){Z[i]=sample((1:k),1, prob=Pzs[[.ch]][i,])}	
+					for (i in 1:n){Z[i]=sample((1:k),1, prob=Pzs[[.ch]][i,])}	 #	sample 1 of the k classes for each row by Pzs (prob)
 					matk = matrix((1:k), nrow = n, ncol = k, byrow = T)
 					IndiZ = (Z == matk)		
 					ZSaved[[.ch]][,1]<-Z
-			                                                                                                          # 3 compute ns and sx
+			                          # 3 compute ns and sx
 					ns = apply(IndiZ,2,sum)	
 					ns[is.na(ns)]<-0  	
 					sx = apply(IndiZ*Y, 2, sum)
 					
-			                                                                                                          # 4 Generate P[j](t) from dirichlet  (and save)
+			                          # 4 Generate P[j](t) from dirichlet  (and save)
 					Bigp[[.ch]][j,] = rdirichlet(m=1,par= ns+alphas[.ch])  
 					
 			                                                                                                          # 5	Generate Mu's   (and save)

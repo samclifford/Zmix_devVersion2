@@ -16,7 +16,7 @@
  	# REPLICATE y samples
  	dtc<-min(detectCores(), NumRep)
  	print(paste ( "Using ",dtc, " Cores"))
-	yrep<-lapply(rep(n, NumRep),  function(x) simMe( sim, x)$Y)
+	yrep<-lapply(rep(n, NumRep),  function(x) simMe( sim, x))
  	#zmixRun<-lapply(yrep, function(x){   Zmix_lightLYRA(x, K,...)} )
  	zmixRun<-mclapply(yrep, FUN= function(x) Zmix_lightLYRAquicktry(x) , mc.cores=dtc) 
  	
@@ -30,7 +30,8 @@
 		ggsave(plot=p, filename= paste("Target_K0",mylabels,".tiff", sep="") ,
 		 width=10, height=10, units='cm' )
 
-
-
+	Ymatrix<-matrix(unlist(yrep), nrow=2*NumRep, byrow=TRUE)[seq(1,2*NumRep, by=2),]  # each row is a y
+	Zmatrix<-matrix(unlist(yrep), nrow=2*NumRep, byrow=TRUE)[seq(2,2*NumRep, by=2),]
+	save(TargetK0, file="ifIexistthisworks.RDATA")
 	return(list("TargetK0"=TargetK0, "K0s"=K0s, "Y"=Ymatrix, "Z"=Zmatrix )) }
 	
