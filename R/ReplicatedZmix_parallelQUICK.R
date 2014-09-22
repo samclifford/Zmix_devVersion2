@@ -14,7 +14,7 @@
  ReplicatedZmix_parallelQUICK<-function (NumRep,  sim , n, mylabels="trial", ...) {
 	require('parallel')
  	# REPLICATE y samples
- 	dtc<-detectCores()
+ 	dtc<-min(detectCores(), NumRep)
  	print(paste ( "Using ",dtc, " Cores"))
 	yrep<-lapply(rep(n, NumRep),  function(x) simMe( sim, x))
  	#zmixRun<-lapply(yrep, function(x){   Zmix_lightLYRA(x, K,...)} )
