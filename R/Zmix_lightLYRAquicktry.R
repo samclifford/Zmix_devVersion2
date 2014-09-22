@@ -7,15 +7,15 @@
 #' @examples
 #' #... you know...
 
-Zmix_lightLYRAquicktry<-function(y){
+Zmix_lightLYRAquicktry<-function(Y){
 				 isSim=TRUE	
 				 k=5
 				 iter=1000
 				 burn=iter/10
 				 alphas= c(10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6,7, 8, 10, 12, 15, 20, 30)))
 			#ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
-				if(isSim==TRUE) {Y<-y$Y
-					}else{ Y<-y}
+				
+			print(Y)
 				parallelAccept<-function(w1, w2, a1, a2){
 						w1[w1< 1e-200]<-1e-200             # truncate so super small values dont crash everyting
 						w2[w2< 1e-200]<-1e-200

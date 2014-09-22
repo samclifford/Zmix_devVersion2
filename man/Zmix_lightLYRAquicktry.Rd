@@ -3,7 +3,7 @@
 \alias{Zmix_lightLYRAquicktry}
 \title{Run Gibbs sampler with prior tempering}
 \usage{
-Zmix_lightLYRAquicktry(y)
+Zmix_lightLYRAquicktry(Y)
 }
 \arguments{
 \item{y,}{k,iter, isSim=TRUE, alphas=}

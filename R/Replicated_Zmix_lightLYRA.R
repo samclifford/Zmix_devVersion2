@@ -11,11 +11,13 @@
 #'
 #'
 #'
- ReplicatedZmix_lightLYRA<-function (NumRep,  sim , n, K=10, mylabels="trial", ...) {
+ ReplicatedZmix_lightLYRA<-function (NumRep,  sim , n, mylabels="trial", ...) {
 	
  	# REPLICATE y samples
-	yrep<-lapply(rep(n, NumRep),  function(x) simMe( sim, x))
- 	zmixRun<-lapply(yrep, function(x){   print(x); flush.console() ; Zmix_lightLYRA(x, K,...)} )
+	yrep<-lapply(rep(n, NumRep),  function(x) simMe( sim, x)$Y)
+ 	print( "Running...")
+
+ 	zmixRun<-lapply(yrep, function(x){   print(x); flush.console() ; Zmix_lightLYRAquicktry(x)} )
  	
  	docall<-do.call(rbind, lapply(zmixRun, melt))
  	K0s<-data.frame(  "Replicate"=rep(1:NumRep, each= dim(docall)[1]/NumRep)  , docall)	
