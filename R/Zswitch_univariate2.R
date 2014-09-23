@@ -58,9 +58,6 @@
 #' 	multiplot(p1,p2,p3)
 
 
-
-
-
 	Zswitch_univ<-function(out_trim, LineUpBy=1,PropMin=0.1 ){
 			K<-dim(out_trim$Ps)[2]
 			
@@ -100,7 +97,7 @@
 			Zfixed<-out_trim$Zs
 			#for each iteration
 			for(.iter in 1:dim(out_trim$Zs)[2]){
-				row.ID<-1
+				
 				#Store current states
 				Znow<-factor(out_trim$Zs[,.iter])    
 				
@@ -146,7 +143,7 @@
 				Zfixed[,.iter]<-as.numeric(as.character(Znew))
 				# Parameters
 				combinePars<-cbind(.iter,as.numeric(BestOne),  out_trim$Ps[.iter,as.numeric(names(BestOne))],out_trim$Mu[.iter,as.numeric(names(BestOne))], out_trim$Sig[.iter,as.numeric(names(BestOne))] )[order(as.numeric(BestOne), decreasing=FALSE),]
-				AllPars[-1][AllPars[1]==.iter,]<- combinePars
+				AllPars[AllPars[1]==.iter,]<- combinePars
 				}
 	
 			

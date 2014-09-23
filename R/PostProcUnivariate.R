@@ -10,7 +10,7 @@
 
 PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.05, isSim=TRUE, simlabel="sim"){
 		
-		ifelse(isSim==TRUE, Y<-mydata$Y, Y<-mydata)
+		ifelse(isSim==TRUE, Y<-mydata$Y,  Y<-mydata)
 
 		n<-length(Y)  
 		K<-dim(Grun$Ps)[2]	
@@ -36,7 +36,7 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.05, i
 		GrunK0$SteadyScore<-	Grun$SteadyScore[.iterK0]
 
 		## 2. unswitch
-		GrunK0us<-QuickSwitch_allPars(GrunK0, LineUp,Propmin )
+		GrunK0us<-ZmixUnderConstruction::QuickSwitch_allPars(GrunK0, LineUp,Propmin )
 
 # PLOTS
 p1<-ggplot(data=GrunK0us$Pars, aes(x=P, fill=factor(k))) + geom_density( alpha=0.4)+ggtitle("Weights ")+ylab("")+xlab("")  +  theme(legend.position = "none")
@@ -45,18 +45,14 @@ p3<-ggplot(data=GrunK0us$Pars, aes(x=Sig, fill=factor(k))) +geom_density(alpha=0
 grobframe <- arrangeGrob(p1, p2, p3, ncol=3, nrow=1,main = textGrob(paste(simlabel,": posterior parameter estimates for", K0[.K0]," groups"), gp = gpar(fontsize=8, fontface="bold.italic", fontsize=14)))
 ggsave(plot=grobframe, filename= paste("PosteriorParDensities_",simlabel,"_K0", K0[.K0],".pdf", sep="") , width=20, height=7, units='cm' )
 
-		## 3. RAND, MSE
-		#ifelse(isSim==TRUE, p_vals$RAND[.K0]<-(sum(mydata$Z==GrunK0us$Zfixed)/n)*100, p_vals$RAND[.K0]<-'NA')    
-		
+		## 3. RAND, MSE	
 		if(isSim==TRUE){
 			maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
 			Zhat<- factor( apply(t(GrunK0us$Zs), 2,maxZ))
 			p_vals$RAND[.K0]<-(sum(mydata$Z==Zhat)/n)*100
 						} else { p_vals$RAND[.K0]<-'NA'}
-	
-	#p_vals$RAND[.K0]<- GrunK0us$RAND
 
-		Zetc<-Zagg(GrunK0us, Y)
+		Zetc<-ZmixUnderConstruction::Zagg(GrunK0us, Y)
 		p_vals$MAE[.K0]<- Zetc$MAE
 		p_vals$MSE[.K0]<- Zetc$MSE
 
@@ -70,12 +66,6 @@ ggsave(plot=grobframe, filename= paste("PosteriorParDensities_",simlabel,"_K0", 
 		p_vals$Pmax[.K0]<-postPredTests$MaxP
 		p_vals$MAPE[.K0]<-postPredTests$MAPE
 		p_vals$MSPE[.K0]<-postPredTests$MSPE
-		p_vals$Concordance[.K0]<-1-postPredTests$Concordance
-
-		}
-
-
-
-		
-		return(list(p_vals, K0estimates))
+		p_vals$Concordance[.K0]<-1-postPredTests$Concordance		}
+		return(list(p_vals, K0estimates, GrunK0us))
 		}
