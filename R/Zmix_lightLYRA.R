@@ -133,7 +133,7 @@ Zmix_lightLYRA<-function(y,  iter=20000){
 					
 					for (j in 2:iter){
 
-   					if( iter %% 200 == 0 ) cat(paste("iteration", j, "complete\n"))
+   					if( j  %% 200 == 0 ) cat(paste("iteration", j, "complete\n"))
 
 					for (.ch in 1:nCh){
 			                                                                                                          #################

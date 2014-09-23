@@ -43,7 +43,7 @@ p1<-ggplot(data=GrunK0us$Pars, aes(x=P, fill=factor(k))) + geom_density( alpha=0
 p2<-ggplot(data=GrunK0us$Pars, aes(x=Mu, fill=factor(k))) + geom_density( alpha=0.4)+ggtitle("Means")+ylab("")+xlab("") +  theme(legend.position = "none")
 p3<-ggplot(data=GrunK0us$Pars, aes(x=Sig, fill=factor(k))) +geom_density(alpha=0.4)+ggtitle("Variance")+ylab("")+xlab("") +  theme(legend.position = "none")
 grobframe <- arrangeGrob(p1, p2, p3, ncol=3, nrow=1,main = textGrob(paste(simlabel,": posterior parameter estimates for", K0[.K0]," groups"), gp = gpar(fontsize=8, fontface="bold.italic", fontsize=14)))
-ggsave(plot=grobframe, filename= paste("PosteriorParDensities_",simlabel,"_K0", K0[.K0],".pdf", sep="") , width=20, height=7, units='cm' )
+ggsave(plot=grobframe, filename= paste("PosteriorParDensities_",simlabel,"_K0", K0[.K0],".tiff", sep="") , width=20, height=7, units='cm' , compression="lzw")
 
 		## 3. RAND, MSE	
 		if(isSim==TRUE){
