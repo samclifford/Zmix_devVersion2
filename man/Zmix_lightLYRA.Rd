@@ -3,7 +3,7 @@
 \alias{Zmix_lightLYRA}
 \title{Run Gibbs sampler with prior tempering}
 \usage{
-Zmix_lightLYRA(y)
+Zmix_lightLYRA(y, iter = 20000)
 }
 \arguments{
 \item{y,}{k,iter, isSim=TRUE, alphas=}

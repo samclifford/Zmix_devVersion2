@@ -3,7 +3,7 @@
 \alias{ReplicatedZmix_parallel}
 \title{A replicated  Function}
 \usage{
-ReplicatedZmix_parallel(NumRep, sim, n, mylabels = "trial", ...)
+ReplicatedZmix_parallel(NumRep, sim, n, mylabels = "trial", nIter = 20000)
 }
 \arguments{
 \item{x,}{alpha, log=False}

@@ -7,10 +7,10 @@
 #' @examples
 #' #... you know...
 
-Zmix_lightLYRA<-function(y){
+Zmix_lightLYRA<-function(y,  iter=20000){
 				 isSim=TRUE	
 				 k=10
-				 iter=20000
+				# iter=20000
 				 burn=iter/10
 				 alphas= c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6,7, 8, 10, 12, 15, 20, 30)))
 			 ifelse(isSim==TRUE, Y<-y$Y, Y<-y)
