@@ -17,7 +17,7 @@
 	yrep<-lapply(rep(n, NumRep),  function(x) simMe( sim, x)$Y)
  	print( "Running...")
 
- 	zmixRun<-lapply(yrep, function(x){   print(x); flush.console() ; Zmix_lightLYRAquicktry(x)} )
+ 	zmixRun<-lapply(yrep, function(x){   print(x); flush.console() ; Zmix_lightLYRA(x)} )
  	
  	docall<-do.call(rbind, lapply(zmixRun, melt))
  	K0s<-data.frame(  "Replicate"=rep(1:NumRep, each= dim(docall)[1]/NumRep)  , docall)	
@@ -34,8 +34,9 @@
 		p <- ggplot(TargetK0, aes(factor(K0), Proportion )) +  geom_boxplot()+xlab("Number of Groups")+ylab("Proportion of iterations")+geom_jitter(position=position_jitter(width=0.01,height=.01), alpha=.3, size=.5)+ coord_flip()
 		ggsave(plot=p, filename= paste("Target_K0",mylabels,".tiff", sep="") ,
 		 width=10, height=10, units='cm' )
+	#return(list("TargetK0"=TargetK0, "Y"=Ymatrix, "Z"=Zmatrix)) 
 
-
-
-	return(list("TargetK0"=TargetK0, "Y"=Ymatrix, "Z"=Zmatrix)) }
+		zout<-list("TargetK0"=TargetK0, "K0s"=K0s, "Y"=Ymatrix, "Z"=Zmatrix )
+		save(zout, file =paste(mylabels, "Out.RDATA", sep="")) 
+		}
 	
