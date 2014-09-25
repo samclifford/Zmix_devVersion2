@@ -25,7 +25,7 @@ getBF<-function(mydata, alpha=10, Krange=c(1:10)){
 
 	for (i in 1:length(Krange)){
 		ncomp<-Krange[i]
-		out<-rnmixGibbs(Data=Data1,Prior=list(ncomp=ncomp, a=c(rep(alpha, ncomp))),Mcmc=list(R=2000,keep=1))
+		out<-rnmixGibbs(Data=Data1,Prior=list(ncomp=ncomp, a=c(rep(alpha, ncomp))),Mcmc=list(R=20000,keep=1))
 		CompareLogMar$MargDens_bm[i]<-eMixMargDen(grid=grd,probdraw= out$nmix$probdraw,compdraw= out$nmix$compdraw )	}
 
 	for (i in 2:dim(CompareLogMar)[1])	{CompareLogMar$BF_bm[i]<- CompareLogMar$MargDens_bm[i]/CompareLogMar$MargDens_bm[i-1]}
