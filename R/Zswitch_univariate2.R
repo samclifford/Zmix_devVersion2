@@ -88,7 +88,9 @@
 			#levels(Zref)<-FinalOrderChoice
 			levels(Zref)<- c(1:K)[order(FinalOrderChoice)]
 			Zref<- factor(Zref,levels(Zref)[order(levels(Zref))])
-			
+			#ADD ?
+			Zref<- factor(Zref)
+
 			
 			# storage dataframes:
 		
@@ -119,16 +121,43 @@
 				}
 
 				namesCandies<-names(Candies)
-				# Catch if no appropriate seperation available at all, check all permutations. Only occurs in really bad models with bad convergence.				
+				# Catch if no appropriate seperation available at all, check all permutations of potential groups. Only occurs in really bad models with bad convergence.				
+				done<-0
 				if(class(Candies)=='data.frame'){
 				if  ( max(sapply(apply(Candies, 1, unique), length))<length(row.names(CandiCells))){
-					Candies<- permutations(K)}
-					}else{
-						if  (length(unique(Candies))<length(row.names(CandiCells))){
-					Candies<- permutations(K)}
-					} 
+					#Candies<- permutations(K)
+					Candies<- matrix(as.numeric(row.names(CandiCells)[permutations(length(row.names(CandiCells)))]), ncol=length(row.names(CandiCells)))	
+					 colnames(Candies)<-as.numeric(names(as.data.frame(CandiCells)))
 
-				MinusRefPars<-function(x) 	{ flp<- as.numeric(  row.names(CandiCells)[unlist(Candies[x,])])
+
+						MinusRefPars_catch<-function(x) 	{ flp<- Candies[x,]
+						if(length(unique(flp))<length(flp)) { Inf
+						} else {sum(abs( (refComp	-  c(out_trim$P[.iter,flp], out_trim$Mu[.iter,flp],out_trim$Sig[.iter,flp]))/refComp))	}}
+
+						BestOne<-which.min( sapply(1:dim(Candies)[1] , MinusRefPars_catch))  # find the best perm out of options
+						BestOne<-Candies[BestOne,]
+						#if(is.null(names(BestOne))) {names(BestOne)<-namesCandies}
+			
+						# Allocations  #Znew<-Znow; 
+						Znew<-factor(Znow, levels=BestOne)
+						levels(Znew)<-colnames(CandiCells)
+
+						Zfixed[,.iter]<-as.numeric(as.character(Znew))
+						# Parameters
+				#		combinePars<-cbind(.iter,BestOne,  out_trim$Ps[.iter,BestOne],out_trim$Mu[.iter,BestOne], out_trim$Sig[.iter,BestOne] )[order(BestOne, decreasing=FALSE),]
+				combinePars<-cbind(.iter,as.numeric(colnames(CandiCells)),  out_trim$Ps[.iter,BestOne],out_trim$Mu[.iter,BestOne], out_trim$Sig[.iter,BestOne] )
+						
+					AllPars[AllPars[1]==.iter,]<- combinePars
+						done<-1
+
+					}}
+					#else{
+					#	if  (length(unique(Candies))<length(row.names(CandiCells))){
+					#Candies<- permutations(K)}
+					#} 
+			if (done==0){
+			MinusRefPars<-function(x) 	{ flp<- as.numeric(  row.names(CandiCells)[unlist(Candies[x,])])
+						flp<-na.omit(flp)
 						if(length(unique(flp))<length(flp)) { Inf
 						} else {sum(abs( (refComp	-  c(out_trim$P[.iter,flp], out_trim$Mu[.iter,flp],out_trim$Sig[.iter,flp]))/refComp))	}}
 											
@@ -144,7 +173,8 @@
 				# Parameters
 				combinePars<-cbind(.iter,as.numeric(BestOne),  out_trim$Ps[.iter,as.numeric(names(BestOne))],out_trim$Mu[.iter,as.numeric(names(BestOne))], out_trim$Sig[.iter,as.numeric(names(BestOne))] )[order(as.numeric(BestOne), decreasing=FALSE),]
 				AllPars[AllPars[1]==.iter,]<- combinePars
-				}
+			}
+		}
 	
 			
 			# sumarise Zs (find max)

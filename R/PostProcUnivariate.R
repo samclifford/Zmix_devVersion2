@@ -36,7 +36,7 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.05, i
 		GrunK0$SteadyScore<-	Grun$SteadyScore[.iterK0]
 
 		## 2. unswitch
-		GrunK0us<-ZmixUnderConstruction::QuickSwitch_allPars(GrunK0, LineUp,Propmin )
+		GrunK0us<-Zswitch_univ(GrunK0, LineUp,Propmin )
 
 # PLOTS
 p1<-ggplot(data=GrunK0us$Pars, aes(x=P, fill=factor(k))) + geom_density( alpha=0.4)+ggtitle("Weights ")+ylab("")+xlab("")  +  theme(legend.position = "none")
