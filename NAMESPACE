@@ -3,6 +3,7 @@
 export(BFreplicate)
 export(PostPredFunk)
 export(PostProcUnivariate)
+export(PostProcUnivariate_later)
 export(ProstProcAWESOME)
 export(QuickSwitchMVN)
 export(QuickSwitch_allPars)

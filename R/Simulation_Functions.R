@@ -75,7 +75,7 @@ sim5func<-function(n){
 
 
 sim6func<-function(n){
-			S6<-list(mu = c(15, 7, 1),sig=c(1, 1, 1),p=c(0.4,  0.3, 0.2),k=3) 
+			S6<-list(mu = c(15, 7, 1),sig=c(1, 1, 1),p=c(0.4,  0.35, 0.25),k=3) 
 			simudZ(mu=S6$mu, sig=S6$sig, n=n, p=S6$p, k=S6$k) }
 
 

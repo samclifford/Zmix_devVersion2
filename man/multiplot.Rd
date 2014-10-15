@@ -9,7 +9,7 @@ multiplot(..., plotlist = NULL, file, cols = 1, layout = NULL)
 \item{plots}{and rest}
 }
 \description{
-This function draws samples from a Wishart dist
+This function ....
 }
 \examples{
 # not run

@@ -23,6 +23,7 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.05, i
 			"RAND"=NA, "MAE"=NA, "MSE"=NA,"Pmin"=NA, "Pmax"=NA, "Concordance"=NA, "MAPE"=NA, "MSPE"=NA)
 						
 		K0estimates<-vector("list", length(K0))
+		GrunK0us_FIN<-vector("list", length(K0))
 		#for each K0:
 		for ( .K0 in 1:length(K0)){
 		GrunK0<-Grun
@@ -37,13 +38,29 @@ PostProcUnivariate<-function( Grun,  mydata, prep=10000,LineUp=1,Propmin=0.05, i
 
 		## 2. unswitch
 		GrunK0us<-Zswitch_univ(GrunK0, LineUp,Propmin )
-
+		GrunK0us_FIN[[.K0]]<-GrunK0us
 # PLOTS
 p1<-ggplot(data=GrunK0us$Pars, aes(x=P, fill=factor(k))) + geom_density( alpha=0.4)+ggtitle("Weights ")+ylab("")+xlab("")  +  theme(legend.position = "none")
 p2<-ggplot(data=GrunK0us$Pars, aes(x=Mu, fill=factor(k))) + geom_density( alpha=0.4)+ggtitle("Means")+ylab("")+xlab("") +  theme(legend.position = "none")
 p3<-ggplot(data=GrunK0us$Pars, aes(x=Sig, fill=factor(k))) +geom_density(alpha=0.4)+ggtitle("Variance")+ylab("")+xlab("") +  theme(legend.position = "none")
 grobframe <- arrangeGrob(p1, p2, p3, ncol=3, nrow=1,main = textGrob(paste(simlabel,": posterior parameter estimates for", K0[.K0]," groups"), gp = gpar(fontsize=8, fontface="bold.italic", fontsize=14)))
 ggsave(plot=grobframe, filename= paste("PosteriorParDensities_",simlabel,"_K0", K0[.K0],".pdf", sep="") , width=20, height=7, units='cm' )
+
+		ggAllocationPlot<-function( outZ, myY, plotTitle, plotfilename){
+			grr<-outZ[order(myY),]
+			grrTable<-data.frame("myY"=NULL, "k"=NULL, "Proportion"=NULL)
+			maxK<-max(grr)
+			for (i in 1:length(myY)){rr<-factor(grr[i,], levels=1:maxK)
+			grrTable<-rbind(grrTable,cbind(i,c(1:maxK), matrix(table(rr)/ length(rr) )))    }
+			names(grrTable)<-c("myY", "k", "Proportion")
+			
+			gp<-ggplot(grrTable, aes(x=myY, y=k, fill=Proportion)) + geom_tile()+ggtitle( paste(plotTitle, sep="" ))+ 
+			xlab("index of ordered y")+
+			scale_fill_gradientn(colours = c("#ffffcc","#a1dab4","#41b6c4","#2c7fb8","#253494" ))+theme(legend.position='right')
+			ggsave( plot=gp,  filename=paste( "Allocations_", plotfilename ,"K_",maxK, ".pdf",sep="") )
+			}
+
+		ggAllocationPlot(GrunK0us$Zs, Y, paste("Posterior allocations for ",simlabel ," with K0=", K0[.K0], sep=""),  simlabel )
 
 		## 3. RAND, MSE	
 		if(isSim==TRUE){
@@ -67,5 +84,5 @@ ggsave(plot=grobframe, filename= paste("PosteriorParDensities_",simlabel,"_K0", 
 		p_vals$MAPE[.K0]<-postPredTests$MAPE
 		p_vals$MSPE[.K0]<-postPredTests$MSPE
 		p_vals$Concordance[.K0]<-1-postPredTests$Concordance		}
-		return(list(p_vals, K0estimates, GrunK0us))
+		return(list(p_vals, K0estimates, GrunK0us_FIN))
 		}

@@ -1,7 +1,7 @@
  
 #' Create multiplot ggplot2 
 #'
-#' This function draws samples from a Wishart dist
+#' This function ....
 #' @param plots and rest
 #' @keywords ggplot
 #' @export

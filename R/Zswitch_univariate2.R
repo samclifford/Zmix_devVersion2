@@ -68,8 +68,6 @@
 			Zref<-factor(out_trim$Zs[,	wml], levels=1:K,ordered=FALSE) 
 			if (LineUpBy==1){	
 				FinalOrderChoice<-order(out_trim$Ps[wml,], decreasing=TRUE)		
-			#	refPar<-out_trim$Ps[wml,FinalOrderChoice]##***##
-				# comparing pars:
 				non0ref<-FinalOrderChoice[1:sum(table(Zref)>0)]
 				refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
 
@@ -77,14 +75,12 @@
 				.tbs<-table(Zref)
 				.tbs[.tbs>0]<-1
 				FinalOrderChoice	 <-order(.tbs*out_trim$Sig[wml,], decreasing=TRUE)
-			# PICK SUPPORTING PARS
-			#refPar<-out_trim$Sig[wml,FinalOrderChoice]##***##
-
-			# comparing pars:
-			non0ref<-FinalOrderChoice[1: sum(.tbs)]  # not right
-			refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
-
-			}
+				non0ref<-FinalOrderChoice[1: sum(.tbs)]  # not right
+				refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
+				# FinalOrderChoice<-order(out_trim$Sig[wml,], decreasing=TRUE)		
+# 				non0ref<-FinalOrderChoice[1:sum(table(Zref)>0)]
+# 				refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
+}
 			#levels(Zref)<-FinalOrderChoice
 			levels(Zref)<- c(1:K)[order(FinalOrderChoice)]
 			Zref<- factor(Zref,levels(Zref)[order(levels(Zref))])
