@@ -8,7 +8,7 @@
 #' #nope
 
 
-PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,Propmin=0.05, isSim=TRUE, simlabel="sim"){
+PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.05, isSim=TRUE, simlabel="sim"){
 		Grun<-trimit(Out=Grun, nEnd=20000)
 		ifelse(isSim==TRUE, Y<-mydata$Y,  Y<-mydata)
 
@@ -24,6 +24,7 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,Propmin=0.05, isSim=T
 						
 		K0estimates<-vector("list", length(K0))
 		GrunK0us_FIN<-vector("list", length(K0))
+
 	#for each K0:
 		for ( .K0 in 1:length(K0)){
 		GrunK0<-Grun
@@ -37,14 +38,14 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,Propmin=0.05, isSim=T
 		GrunK0$SteadyScore<-	Grun$SteadyScore[.iterK0]
 
 		## 2. unswitch
-		GrunK0us<-Zswitch_univ(GrunK0, LineUp,Propmin )
+		GrunK0us<-ZmixUnderConstruction::Zswitch_univ(GrunK0, LineUp,Propmin )
 		GrunK0us_FIN[[.K0]]<-GrunK0us
 
 # PLOTS density pars
 	GrunK0us$Pars$k<-as.factor(GrunK0us$Pars$k)
-	p1<-ggplot(data=GrunK0us$Pars, aes(x=P, fill=k)) + geom_density( alpha=0.4)+ggtitle("Weights ")+ylab("")+xlab("")  +theme_bw()+  theme(legend.position = "none")
-	p2<-ggplot(data=GrunK0us$Pars, aes(x=Mu, fill=k)) + geom_density( alpha=0.4)+ggtitle("Means")+ylab("")+xlab("") +theme_bw()+  theme(legend.position = "none")
-	p3<-ggplot(data=GrunK0us$Pars, aes(x=Sig, fill=k)) +geom_density(alpha=0.4)+ggtitle("Variance")+ylab("")+xlab("") +theme_bw()+  theme(legend.position = "none")
+	p1<-ggplot(data=GrunK0us$Pars, aes(x=P, fill=k)) + geom_density( alpha=0.4)+ggtitle( bquote( atop(italic( .(simlabel) ), atop("Weights"))))+ ylab("")+xlab("")  +theme_bw()+  theme(legend.position = "none")
+	p2<-ggplot(data=GrunK0us$Pars, aes(x=Mu, fill=k)) + geom_density( alpha=0.4)+ggtitle(ggtitle(bquote(atop(italic( "Posterior summaries"), atop("Means")))))+ylab("")+xlab("") +theme_bw()+  theme(legend.position = "none")
+	p3<-ggplot(data=GrunK0us$Pars, aes(x=Sig, fill=k)) +geom_density(alpha=0.4)+ggtitle(ggtitle(bquote(atop(italic(paste( "K = ", .(K0[.K0]), sep="")), atop("Variances")))))+ylab("")+xlab("") +theme_bw()+  theme(legend.position = "none")
 	#grobframe <- arrangeGrob(p1, p2, p3, ncol=3, nrow=1,main = textGrob(paste(simlabel,": posterior parameter estimates for", K0[.K0]," groups"), gp = gpar(fontsize=8, fontface="bold.italic", fontsize=14)))
 	#ggsave(plot=grobframe, filename= paste("PosteriorParDensities_",simlabel,"_K0", K0[.K0],".pdf", sep="") , width=20, height=7, units='cm' )
 
@@ -78,11 +79,6 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,Propmin=0.05, isSim=T
 		postPredTests<-PostPredFunk( GrunK0us,Zetc, Y, prep, simlabel)
 		p5<-postPredTests$ggp
 
-  Final_Plots<-layOut(	list(p1, 	1, 1:2),   # takes three rows and the first column
-        	list(p2, 	1, 3:4),    # next three are on separate rows
-         	list(p3,	1,5:6),
-         	list(p4, 	2,1:3),  
-          	list(p5, 	2,4:6))
 
 
 
@@ -94,9 +90,15 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,Propmin=0.05, isSim=T
 		thetaCI<-cbind( theta[,c(1,2)] , "value"=paste( mu, "(", ci[,1] , "," ,ci[,2] ,")", sep="" ))
 		K0estimates[[.K0]]<-cbind(thetaCI, "K0"=K0[.K0])
 
-		
-		}
+		pdf( file= paste("PPplots", simlabel ,"K_", K0[.K0] ,".pdf", sep=""), width=10, height=5)
+ 		print( layOut(	list(p1, 	1, 1:2),  
+	        	list(p2, 	1, 3:4),   
+	         	list(p3,	1,5:6),
+	         	list(p4, 	2,1:3),  
+	          	list(p5, 	2,4:6)))
+		dev.off()
 
+		}
 		Final_Pars<-do.call(rbind, K0estimates)
-		return( list(Final_Pars, Final_Plots))
+		return( Final_Pars)
 		}
