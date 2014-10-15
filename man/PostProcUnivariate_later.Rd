@@ -3,8 +3,8 @@
 \alias{PostProcUnivariate_later}
 \title{PostProcessing function univ}
 \usage{
-PostProcUnivariate_later(Grun, mydata, LineUp = 1, Propmin = 0.05,
-  isSim = TRUE, simlabel = "sim")
+PostProcUnivariate_later(Grun, mydata, LineUp = 1, prep = 10000,
+  Propmin = 0.05, isSim = TRUE, simlabel = "sim", savelabel = "PPplot")
 }
 \arguments{
 \item{v}{and s}

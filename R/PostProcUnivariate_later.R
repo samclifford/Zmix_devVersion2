@@ -8,7 +8,7 @@
 #' #nope
 
 
-PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.05, isSim=TRUE, simlabel="sim"){
+PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.05, isSim=TRUE, simlabel="sim", savelabel="PPplot"){
 		Grun<-trimit(Out=Grun, nEnd=20000)
 		ifelse(isSim==TRUE, Y<-mydata$Y,  Y<-mydata)
 
@@ -76,11 +76,17 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.
 		GrunK0us$Pars$k<-as.numeric(as.character(GrunK0us$Pars$k))
 
 		Zetc<-ZmixUnderConstruction::Zagg(GrunK0us, Y)
+		p_vals$MAE[.K0]<- Zetc$MAE
+		p_vals$MSE[.K0]<- Zetc$MSE
 		postPredTests<-PostPredFunk( GrunK0us,Zetc, Y, prep, simlabel)
+		# store output in p_vasl
+		p_vals$Pmin[.K0]<-postPredTests$MinP
+		p_vals$Pmax[.K0]<-postPredTests$MaxP
+		p_vals$MAPE[.K0]<-postPredTests$MAPE
+		p_vals$MSPE[.K0]<-postPredTests$MSPE
+		p_vals$Concordance[.K0]<-1-postPredTests$Concordance	
+
 		p5<-postPredTests$ggp
-
-
-
 
 		# CI
 		.par<-melt(GrunK0us$Pars, id.vars=c("Iteration", "k"))
@@ -90,7 +96,7 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.
 		thetaCI<-cbind( theta[,c(1,2)] , "value"=paste( mu, "(", ci[,1] , "," ,ci[,2] ,")", sep="" ))
 		K0estimates[[.K0]]<-cbind(thetaCI, "K0"=K0[.K0])
 
-		pdf( file= paste("PPplots", simlabel ,"K_", K0[.K0] ,".pdf", sep=""), width=10, height=5)
+		pdf( file= paste("PPplots_", savelabel ,"K_", K0[.K0] ,".pdf", sep=""), width=10, height=5)
  		print( layOut(	list(p1, 	1, 1:2),  
 	        	list(p2, 	1, 3:4),   
 	         	list(p3,	1,5:6),
@@ -100,5 +106,5 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.
 
 		}
 		Final_Pars<-do.call(rbind, K0estimates)
-		return( Final_Pars)
+		return(list( Final_Pars, p_vals))
 		}
