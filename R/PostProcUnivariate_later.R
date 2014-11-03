@@ -8,8 +8,9 @@
 #' #nope
 
 
-PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.05, isSim=TRUE, simlabel="sim", savelabel="PPplot"){
-		Grun<-trimit(Out=Grun, nEnd=20000)
+PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.05, isSim=TRUE, simlabel="sim", savelabel="PPplot", nEnd=2000){
+	require(wq)
+		Grun<-trimit(Out=Grun, nEnd)
 		ifelse(isSim==TRUE, Y<-mydata$Y,  Y<-mydata)
 
 		n<-length(Y)  
@@ -97,7 +98,7 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.
 		K0estimates[[.K0]]<-cbind(thetaCI, "K0"=K0[.K0])
 
 		pdf( file= paste("PPplots_", savelabel ,"K_", K0[.K0] ,".pdf", sep=""), width=10, height=5)
- 		print( layOut(	list(p1, 	1, 1:2),  
+ 		print( wq::layOut(	list(p1, 	1, 1:2),  
 	        	list(p2, 	1, 3:4),   
 	         	list(p3,	1,5:6),
 	         	list(p4, 	2,1:3),  
