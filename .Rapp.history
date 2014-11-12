@@ -1,0 +1,21 @@
+library(devtools)
+library(roxygen2)
+library(roxygen)
+library(roxygen2)
+install_github('Zmix_devVersion2','zoevanhavre', args=c('--library="H:/Documents/R/win-library/3.1"'))#
+	library(ZmixUnderConstruction)
+?install_github
+abs((5-6)/5)
+abs((5-9)/5)+abs((8-6)/8)
+abs((5-6)/5)+abs((8-9)/8)
+abs((5-6))/5+abs((8-9))/8
+abs((5-9))/5+abs((8-6))/8
+## GITHUB USE ONLY#
+library("devtools")#
+library(roxygen2)#
+#
+## update package#
+setwd("C:/Users/n8390509/Google Drive/GitHub/Zmix_devVersion2")#
+document()
+setwd("Google Drive/GitHub/Zmix_devVersion2")
+document()
