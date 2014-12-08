@@ -4,7 +4,7 @@
 #' @export
 #' @examples
 #' #not run
-	Zmix_multi_tempered<-function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
+	Zmix_multi_tempered_OLD<-function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
 					
 				
 					trimit<-function(Out=Out, nEnd=EndSize){
@@ -166,7 +166,7 @@
 					SteadyScore$K0[.it]<-sum(table(Zs[[nCh]][.it,])>0)
 
 					## PARALLEL TEMPERING MOVES 
-					 if(j>1) {TrackParallelTemp[.it,]<-TrackParallelTemp[.it-1,]}      # SET para chains to previous values                                                                                           # how often??? lets go with probability 10% of switching at any time
+					 if(nCh>1) {TrackParallelTemp[.it,]<-TrackParallelTemp[.it-1,]}      # SET para chains to previous values                                                                                           # how often??? lets go with probability 10% of switching at any time
 
 					 if(.it>20){
 					 if( sample(c(1,0),1, 0.9)==1){	 
@@ -174,11 +174,11 @@
 						MHratio<- parallelAccept(Ps[[Chain1]][.it,], Ps[[Chain2]][.it,], rep(alphas[Chain1],k), rep(alphas[Chain2],k))
 						if (MHratio==1){  
 							 #new
-			             .tpt1<-  TrackParallelTemp[j,Chain1 ]
-			             .tpt2<-  TrackParallelTemp[j,Chain2 ]             
-						TrackParallelTemp[j,Chain1 ]<-.tpt2
-			            TrackParallelTemp[j,Chain2 ]<-.tpt1 
-						# Just flip the allocations since all pars drawn from this 
+			             .tpt1<-  TrackParallelTemp[nCh,Chain1 ]
+			             .tpt2<-  TrackParallelTemp[nCh,Chain2 ]             
+						TrackParallelTemp[nCh,Chain1 ]<-.tpt2
+			            TrackParallelTemp[nCh,Chain2 ]<-.tpt1 
+						# nChust flip the allocations since all pars drawn from this 
 							.z1<-	Zs[[Chain1]][.it,] 	;		.z2<-	Zs[[Chain2]][.it,]
 							Zs[[Chain1]][.it,]<-.z2		;		Zs[[Chain2]][.it,]<-.z1
 							}}}
