@@ -81,6 +81,14 @@
 # 				non0ref<-FinalOrderChoice[1:sum(table(Zref)>0)]
 # 				refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
 }
+
+# NEW testing? finish later.. got to undo it before computing error stats
+#if( sum(out_trim$Mu[wml,non0ref]==0)>0){
+#	out_trim$Mu<-out_trim$Mu+1
+#	refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref]+1, out_trim$Sig[wml,non0ref])
+
+#}
+##
 			#levels(Zref)<-FinalOrderChoice
 			levels(Zref)<- c(1:K)[order(FinalOrderChoice)]
 			Zref<- factor(Zref,levels(Zref)[order(levels(Zref))])
