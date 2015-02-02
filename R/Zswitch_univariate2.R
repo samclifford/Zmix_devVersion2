@@ -70,8 +70,11 @@
 				FinalOrderChoice<-order(out_trim$Ps[wml,], decreasing=TRUE)		
 				non0ref<-FinalOrderChoice[1:sum(table(Zref)>0)]
 				refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
+} else if(LineUpBy==2){	FinalOrderChoice<-order(out_trim$Mu[wml,], decreasing=TRUE)		
+				non0ref<-FinalOrderChoice[1:sum(table(Zref)>0)]
+				refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
 
-			} else if(LineUpBy==2){	
+			} else if(LineUpBy==3){	
 				.tbs<-table(Zref)
 				.tbs[.tbs>0]<-1
 				FinalOrderChoice	 <-order(.tbs*out_trim$Sig[wml,], decreasing=TRUE)
