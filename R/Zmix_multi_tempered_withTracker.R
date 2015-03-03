@@ -7,7 +7,7 @@
 	Zmix_multi_tempered_OLD<-function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
 					
 				
-					trimit<-function(Out=Out, nEnd=EndSize){
+					trimmit<-function(Out=Out, nEnd=EndSize){
 							yo<-length(Out$Mu)		
 							ps<-Out$P[[yo]][c(iter-nEnd+1):iter,]			
 							mu<-subset(Out$Mu[[yo]], Iteration>c(iter-nEnd))
@@ -198,5 +198,5 @@
 					 # end of iterations loop
 
 					bigres<-list( P=Ps, Cov=FINcov, Mu=FINmu, Zs=Zs, YZ=YZ, SteadyScore=SteadyScore, Loglike=Loglike)
-					return(trimit(bigres, nEnd=EndSize))
+					return(trimmit(bigres, nEnd=EndSize))
 					 }

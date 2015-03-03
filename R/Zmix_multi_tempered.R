@@ -11,15 +11,7 @@
 						    rooti <- backsolve(chol(Sigma),diag(k))
 						    quads <- colSums((crossprod(rooti,(t(X)-mu)))^2)
 						    return(exp(-(k/2)*log(2*pi) + sum(log(diag(rooti))) - .5*quads))}
-					trimit<-function(Out=Out, nEnd=EndSize){
-							yo<-length(Out$Mu)		
-							ps<-Out$P[[yo]][c(iter-nEnd+1):iter,]			
-							mu<-subset(Out$Mu[[yo]], Iteration>c(iter-nEnd))
-							covs<-subset(Out$Cov[[yo]], Iteration>c(iter-nEnd))
-							zs<-Out$Zs[[yo]][c(iter-nEnd+1):iter,]
-							Loglike<-Out$Loglike[c(iter-nEnd+1):iter]
-			     			SteadyScore<-Out$SteadyScore$K[c(iter-nEnd+1):iter]
-							list(Mu = mu,Cov=covs, P= ps,  Zs=zs, Y=Out$Y, Loglike=Loglike, SteadyScore=SteadyScore)	}
+					
 					dDirichlet<-function (x, alpha, log = FALSE) {
 						    dlog = lgamma(sum(alpha)) + sum((alpha - 1) * log(x)) - sum(lgamma(alpha))
 						    result = ifelse(!log, exp(dlog), dlog)
@@ -124,7 +116,8 @@
 							WkZ<-bits$WkZ
 
 							ns <-apply((.Zs  ==  matrix((1:k), nrow = n, ncol = k, byrow = T)),2,sum)
-							} else {  # uses the allocations from end of last iteration
+							} else {  
+							# uses the allocations from end of last iteration
 							bits<-minions(Zs[[.ch]][.it-1,])
 								ns<-bits$ns; ybar<-bits$ybar ;	WkZ<-bits$WkZ
 								.Zs<-Zs[[.ch]][.it-1,]
@@ -133,14 +126,13 @@
 				
 						# STEP 2.1 : GENERATE Samples for WEIGHTS from DIRICHLET dist
 								#  COUNTER FOR ALPHA CHANGE   if (ShrinkAlpha==TRUE){	
-						
 								Ps[[.ch]][.it,] = rdirichlet(m=1,par= ns+alphas[.ch])
 							
 						#STEP 2.2 GENERATE Samples from Covariance Matrix for each component
 							newCov<-mapply( CovSample, ns, WkZ, ybar)
 							newCovLIST<-as.list(as.data.frame(newCov))
 
-							 FINcov[[.ch]]<-rbind(FINcov[[.ch]],cbind(t(newCov), 'K'=1:k, 'Iteration'=.it))
+							FINcov[[.ch]]<-rbind(FINcov[[.ch]],cbind(t(newCov), 'K'=1:k, 'Iteration'=.it))
 
 
 						#STEP 2.3 GENERATE SAMPLEs of the component specific Mu's from multivariate normal (bk,Bk)
@@ -195,6 +187,26 @@
 
 					 # end of iterations loop
 
-					bigres<-list( P=Ps, Cov=FINcov, Mu=FINmu, Zs=Zs, YZ=YZ, SteadyScore=SteadyScore, Loglike=Loglike)
-					return(trimit(bigres, nEnd=EndSize))
+					#bigres<-list( P=Ps, Cov=FINcov, Mu=FINmu, Zs=Zs, YZ=YZ, SteadyScore=SteadyScore, Loglike=Loglike)
+
+				#	trimit<-function(Out=Out, nEnd=EndSize){
+						#	yo<-length(Out$Mu)		
+						#	ps<-Out$P[[yo]][c(iter-nEnd+1):iter,]			
+						##	covs<-subset(Out$Cov[[yo]], Iteration>c(iter-nEnd))
+						#	zs<-Out$Zs[[yo]][c(iter-nEnd):(iter-1),]
+						#	Loglike<-Out$Loglike[c(iter-nEnd+1):iter]
+			     			#	SteadyScore<-Out$SteadyScore$K[c(iter-nEnd+1):iter]
+						#	list(Mu = mu,Cov=covs, P= ps,  Zs=zs, Y=Out$Y, Loglike=Loglike, SteadyScore=SteadyScore)	}
+
+
+					ps<-Ps[[nCh]][c(iter-EndSize+1):iter,]			
+					mu<-subset(FINmu[[nCh]], Iteration>c(iter-EndSize))
+					covs<-subset(FINcov[[nCh]], Iteration>c(iter-EndSize))
+					zs<-Zs[[nCh]][c(iter-EndSize):(iter-1),]
+					Loglike<-Loglike[c(iter-EndSize+1):iter]
+	     				SteadyScore<-SteadyScore$K[c(iter-EndSize+1):iter]
+							
+				
+				  	return(list(Mu = mu,Cov=covs, P= ps,  Zs=zs, Y=Out$Y, Loglike=Loglike, SteadyScore=SteadyScore))
+#					return(trimit(bigres, nEnd=EndSize))
 					 }

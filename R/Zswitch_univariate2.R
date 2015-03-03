@@ -1,4 +1,4 @@
-#' Label switch fix for Univariate Normals 
+#' Label switch fix for Univariate Normals (MAIN ONE)
 #'
 #' This function fixes the label switching in the output of a univariate Gibbs sampler. Requires a constant number of non-empty groups in samples, but can deal with empty groups.
 #' @param out_trim: LIST of output of Gibbs sampler with the following components:
