@@ -136,7 +136,7 @@ combinePars$K<-as.numeric(BestOne)
 					AllPars<-rbind(AllPars, combinePars)
 				}
 	
-						maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
+						#maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
 						Zhat<- factor( apply(t(Zfixed), 1,maxZ), levels=1:K)
 								
 						varSum<- sum(apply(AllPars[,-c(1,2)], 2, var)) 

@@ -6,17 +6,17 @@
 #' #not run
 	Zmix_multi_tempered<-function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
 					
-					dMvn <- function(X,mu,Sigma) {
-						    k <- ncol(X)
-						    rooti <- backsolve(chol(Sigma),diag(k))
-						    quads <- colSums((crossprod(rooti,(t(X)-mu)))^2)
-						    return(exp(-(k/2)*log(2*pi) + sum(log(diag(rooti))) - .5*quads))}
+				#	dMvn <- function(X,mu,Sigma) {
+						#    k <- ncol(X)
+						#    rooti <- backsolve(chol(Sigma),diag(k))
+						#    quads <- colSums((crossprod(rooti,(t(X)-mu)))^2)
+						#    return(exp(-(k/2)*log(2*pi) + sum(log(diag(rooti))) - .5*quads))}
 					
-					dDirichlet<-function (x, alpha, log = FALSE) {
-						    dlog = lgamma(sum(alpha)) + sum((alpha - 1) * log(x)) - sum(lgamma(alpha))
-						    result = ifelse(!log, exp(dlog), dlog)
-						    return(result)
-							}
+					#dDirichlet<-function (x, alpha, log = FALSE) {
+					#	    dlog = lgamma(sum(alpha)) + sum((alpha - 1) * log(x)) - sum(lgamma(alpha))
+					#	    result = ifelse(!log, exp(dlog), dlog)
+					#	    return(result)
+					#		}
 
 					parallelAccept<-function(w1, w2, a1, a2){
 							w1[w1< 1e-200]<-1e-200   # truncate so super small values dont crash everyting

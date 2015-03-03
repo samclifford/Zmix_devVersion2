@@ -2,7 +2,7 @@
 % Please edit documentation in R/Zswitch_univariate2.R
 \name{Zswitch_univ}
 \alias{Zswitch_univ}
-\title{Label switch fix for Univariate Normals}
+\title{Label switch fix for Univariate Normals (MAIN ONE)}
 \usage{
 Zswitch_univ(out_trim, LineUpBy = 1, PropMin = 0.1)
 }
