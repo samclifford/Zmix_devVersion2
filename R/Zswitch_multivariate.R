@@ -21,6 +21,8 @@
 			
 			## UPDATE HERE 
 			non0ref<-sum(table(Zref)>0)			##
+
+## CHECKIN - done up to here.. .FEB 27
 			iterationID<- max(MVNResult$Mu$Iteration)-(dim(MVNResult$P)[1] - wml)
 			##REF PARAMETERS FOR SECOND PHASE
 			P_ref<- MVNResult$P[wml+1,FinalOrderChoice[1:non0ref]]		
