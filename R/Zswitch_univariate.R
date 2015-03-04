@@ -77,22 +77,36 @@
 				refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
 
 			} else if(LineUpBy==2){	
+				.all<-c(1:K)
+				.tbs<-table(Zref)
+				non0ref<- .all[.tbs>0]
+				non0ref<-non0ref[order(out_trim$Mu[wml, .tbs>0], decreasing=TRUE)]
+				refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
+
+			#non0ref<-FinalOrderChoice[1: sum(.tbs)]  
+			#refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
+
+			}else if(LineUpBy==3){	
 				.tbs<-table(Zref)
 				.tbs[.tbs>0]<-1
-				FinalOrderChoice	 <-order(.tbs*out_trim$Sig[wml,], decreasing=TRUE)
-			# PICK SUPPORTING PARS
-			#refPar<-out_trim$Sig[wml,FinalOrderChoice]##***##
-
-			# comparing pars:
-			non0ref<-FinalOrderChoice[1: sum(.tbs)]  # not right
-			refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
-
-			}
+				FinalOrderChoice <-order(.tbs*out_trim$Sig[wml,], decreasing=TRUE)
+				non0ref<-FinalOrderChoice[1: sum(.tbs)]  
+				refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
+				# FinalOrderChoice<-order(out_trim$Sig[wml,], decreasing=TRUE)		
+# 				non0ref<-FinalOrderChoice[1:sum(table(Zref)>0)]
+# 				refComp<-c(out_trim$P[wml,non0ref], out_trim$Mu[wml,non0ref], out_trim$Sig[wml,non0ref])
+}
 			#levels(Zref)<-FinalOrderChoice
-			levels(Zref)<- c(1:K)[order(FinalOrderChoice)]
+# NEW
+			Zref<-factor(Zref)
+			levels(Zref)<- c(1:K)[order(non0ref)]
+			#levels(Zref)<- c(1:K)[order(FinalOrderChoice)]
 			Zref<- factor(Zref,levels(Zref)[order(levels(Zref))])
 			
-			
+				#
+
+
+
 			# storage dataframes:
 			AllPars<-data.frame('Iteration'=NA, 'k'=NA, 'Ps'=NA, 'Mu'=NA, 'Sig'=NA)[numeric(0), ]
 			Zfixed<-out_trim$Zs
@@ -130,7 +144,8 @@
 					Candies<- permutations(K)}
 					} 
 
-				MinusRefPars<-function(x) 	{ flp<- as.numeric(  row.names(CandiCells)[unlist(Candies[x,])])
+				MinusRefPars<-function(x) 	{ 
+					flp<- as.numeric(  row.names(CandiCells)[unlist(Candies[x,])])
 						if(length(unique(flp))<length(flp)) { Inf
 						} else {sum(abs( (refComp	-  c(out_trim$P[.iter,flp], out_trim$Mu[.iter,flp],out_trim$Sig[.iter,flp]))/refComp))	}}
 											

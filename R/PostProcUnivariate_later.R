@@ -32,21 +32,21 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.
 		# split data by K0
 		.iterK0<-c(1:dim(Grun$Ps)[1])[Grun$SteadyScore==K0[.K0]]
 		GrunK0$Mu<-	Grun$Mu[.iterK0,]
-		GrunK0$Sig<-	Grun$Sig[.iterK0,]
+		GrunK0$Sig<-Grun$Sig[.iterK0,]
 		GrunK0$Ps<-	Grun$Ps[.iterK0,]
-		GrunK0$Loglike<-	Grun$Loglike[.iterK0]
+		GrunK0$Loglike<-Grun$Loglike[.iterK0]
 		GrunK0$Zs<-	Grun$Zs[,.iterK0]
-		GrunK0$SteadyScore<-	Grun$SteadyScore[.iterK0]
+		GrunK0$SteadyScore<-Grun$SteadyScore[.iterK0]
 
 		## 2. unswitch
-		GrunK0us<-ZmixUnderConstruction::Zswitch_univ(GrunK0, LineUp,Propmin )
+		GrunK0us<-QuickSwitch_allPars(GrunK0, LineUp,Propmin )
 		GrunK0us_FIN[[.K0]]<-GrunK0us
 
 # PLOTS density pars
 	GrunK0us$Pars$k<-as.factor(GrunK0us$Pars$k)
 	p1<-ggplot(data=GrunK0us$Pars, aes(x=P, fill=k)) + geom_density( alpha=0.4)+ggtitle( bquote( atop(italic( .(simlabel) ), atop("Weights"))))+ ylab("")+xlab("")  +theme_bw()+  theme(legend.position = "none")
 	p2<-ggplot(data=GrunK0us$Pars, aes(x=Mu, fill=k)) + geom_density( alpha=0.4)+ggtitle(ggtitle(bquote(atop(italic( "Posterior summaries"), atop("Means")))))+ylab("")+xlab("") +theme_bw()+  theme(legend.position = "none")
-	p3<-ggplot(data=GrunK0us$Pars, aes(x=Sig, fill=k)) +geom_density(alpha=0.4)+ggtitle(ggtitle(bquote(atop(italic(paste( "p(K=", .(K0[.K0]), ")=", p_vals$PropIters[.K0], sep="")), atop("Variances")))))+ylab("")+xlab("") +theme_bw()+  theme(legend.position = "none")
+	p3<-ggplot(data=GrunK0us$Pars, aes(x=Sig, fill=k)) +geom_density(alpha=0.4)+ggtitle(ggtitle(bquote(atop(italic(paste( "p(K=", .(K0[.K0]), ")=", .(p_vals$PropIters[.K0]), sep="")), atop("Variances")))))+ylab("")+xlab("") +theme_bw()+  theme(legend.position = "none")
 	#grobframe <- arrangeGrob(p1, p2, p3, ncol=3, nrow=1,main = textGrob(paste(simlabel,": posterior parameter estimates for", K0[.K0]," groups"), gp = gpar(fontsize=8, fontface="bold.italic", fontsize=14)))
 	#ggsave(plot=grobframe, filename= paste("PosteriorParDensities_",simlabel,"_K0", K0[.K0],".pdf", sep="") , width=20, height=7, units='cm' )
 
