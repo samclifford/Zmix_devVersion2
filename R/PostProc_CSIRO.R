@@ -8,7 +8,7 @@
 #' #nope
 
 
-PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.05, isSim=TRUE, simlabel="sim", savelabel="PPplot", nEnd=2000, PlotType="Boxplot"){
+PostProc_CSIRO<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.05, isSim=TRUE, simlabel="sim", savelabel="PPplot", nEnd=2000, PlotType="Boxplot"){
 	require(wq)
 		Grun<-trimit(Out=Grun, nEnd)
 		ifelse(isSim==TRUE, Y<-mydata$Y,  Y<-mydata)
@@ -18,10 +18,10 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.
 	
 		## 1. split by K0
 		K0<-as.numeric(names(table(Grun$SteadyScore)))
-		
+
 		# SAVE table of tests, parameter estimates and clustering (Z's)
-		 p_vals<-data.frame("K0"=K0, "PropIters"=as.numeric(table(Grun$SteadyScore))/dim(Grun$Ps)[1],
-			 "RAND"=NA, "MAE"=NA, "MSE"=NA,"Pmin"=NA, "Pmax"=NA, "Concordance"=NA, "MAPE"=NA, "MSPE"=NA)
+		 p_vals<-data.frame("K0"=K0, "Probability"=as.numeric(table(Grun$SteadyScore))/dim(Grun$Ps)[1],
+			"MAE"=NA, "MSE"=NA,"Pmin"=NA, "Pmax"=NA, "Concordance"=NA, "MAPE"=NA, "MSPE"=NA)
 						
 		K0estimates<-vector("list", length(K0))
 		GrunK0us_FIN<-vector("list", length(K0))
@@ -47,14 +47,13 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.
 	if(PlotType=='Density'){
 	p1<-ggplot(data=GrunK0us$Pars, aes(x=P, fill=k)) + geom_density( alpha=0.4)+ggtitle( bquote( atop(italic( .(simlabel) ), atop("Weights"))))+ ylab("")+xlab("")  +theme_bw()+  theme(legend.position = "none")
 	p2<-ggplot(data=GrunK0us$Pars, aes(x=Mu, fill=k)) + geom_density( alpha=0.4)+ggtitle(ggtitle(bquote(atop(italic( "Posterior summaries"), atop("Means")))))+ylab("")+xlab("") +theme_bw()+  theme(legend.position = "none")
-	p3<-ggplot(data=GrunK0us$Pars, aes(x=Sig, fill=k)) +geom_density(alpha=0.4)+ggtitle(ggtitle(bquote(atop(italic(paste( "p(K=", .(K0[.K0]), ")=", .(p_vals$PropIters[.K0]), sep="")), atop("Variances")))))+ylab("")+xlab("") +theme_bw()+  theme(legend.position = "none")
+	p3<-ggplot(data=GrunK0us$Pars, aes(x=Sig, fill=k)) +geom_density(alpha=0.4)+ggtitle(ggtitle(bquote(atop(italic(paste( "p(K=", .(K0[.K0]), ")=", .(p_vals$Probability[.K0]), sep="")), atop("Variances")))))+ylab("")+xlab("") +theme_bw()+  theme(legend.position = "none")
 	#grobframe <- arrangeGrob(p1, p2, p3, ncol=3, nrow=1,main = textGrob(paste(simlabel,": posterior parameter estimates for", K0[.K0]," groups"), gp = gpar(fontsize=8, fontface="bold.italic", fontsize=14)))
 	#ggsave(plot=grobframe, filename= paste("PosteriorParDensities_",simlabel,"_K0", K0[.K0],".pdf", sep="") , width=20, height=7, units='cm' )
 } else if (PlotType=="Boxplot"){
 		p1<-ggplot(data=GrunK0us$Pars, aes(y=P, x=k)) + geom_boxplot(aes(fill=k), outlier.shape = NA)+ ylab("")+xlab("Components (k)")  +theme_bw()+  theme(legend.position = "none")+ggtitle( bquote( atop(italic( .(simlabel) ), atop("Weights"))))
-
 		p2<-ggplot(data=GrunK0us$Pars, aes(y=Mu, x=k))+ geom_boxplot(aes(fill=k), outlier.shape = NA)+ ylab("")+xlab("Components (k)")  +theme_bw()+  theme(legend.position = "none")+ggtitle(ggtitle(bquote(atop(italic( "Posterior summaries"), atop("Means")))))
-		p3<-ggplot(data=GrunK0us$Pars, aes(y=Sig, x=k)) + geom_boxplot(aes(fill=k), outlier.shape = NA)+ ylab("")+xlab("Components (k)")  +theme_bw()+  theme(legend.position = "none")+ggtitle(ggtitle(bquote(atop(italic(paste( "p(K=", .(K0[.K0]), ")=", .(p_vals$PropIters[.K0]), sep="")), atop("Variances")))))
+		p3<-ggplot(data=GrunK0us$Pars, aes(y=Sig, x=k)) + geom_boxplot(aes(fill=k), outlier.shape = NA)+ ylab("")+xlab("Components (k)")  +theme_bw()+  theme(legend.position = "none")+ggtitle(ggtitle(bquote(atop(italic(paste( "p(K=", .(K0[.K0]), ")=", .(p_vals$Probability[.K0]), sep="")), atop("Variances")))))
 }
 
 		ggAllocationPlot<-function( outZ, myY){
@@ -77,12 +76,8 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.
 			maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
 		    Zhat<- factor( apply(t(GrunK0us$Zs), 2,maxZ))
 		
-			## 3. RAND, MSE	
-			if(isSim==TRUE){
-			#maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
-			#Zhat<- factor( apply(t(GrunK0us$Zs), 2,maxZ));	
-			p_vals$RAND[.K0]<-(sum(mydata$Z==Zhat)/n) 
-			} else { p_vals$RAND[.K0]<-'NA'}
+			## 3. , MSE	
+			
 		GrunK0us$Pars$k<-as.numeric(as.character(GrunK0us$Pars$k))
 
 		Zetc<-ZmixUnderConstruction::Zagg(GrunK0us, Y)
@@ -106,6 +101,7 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.
 		thetaCI<-cbind( theta[,c(1,2)] , "value"=paste( mu, "(", ci[,1] , "," ,ci[,2] ,")", sep="" ))
 		K0estimates[[.K0]]<-cbind(thetaCI, "K0"=K0[.K0])
 
+if(K0[.K0]>1){
 		pdf( file= paste("PPplots_", savelabel ,"K_", K0[.K0] ,".pdf", sep=""), width=10, height=5)
  		print( wq::layOut(	list(p1, 	1, 1:2),  
 	        	list(p2, 	1, 3:4),   
@@ -113,8 +109,14 @@ PostProcUnivariate_later<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.
 	         	list(p4, 	2,1:3),  
 	          	list(p5, 	2,4:6)))
 		dev.off()
+		}
 
 		}
 		Final_Pars<-do.call(rbind, K0estimates)
+		print(p_vals)
+		Result<-list( Final_Pars, p_vals, "Z"=Zhat)
+		save(Result, file=paste("PPresults_", savelabel ,".RDATA", sep=""))
 		return(list( Final_Pars, p_vals, "Z"=Zhat))
+
+
 		}

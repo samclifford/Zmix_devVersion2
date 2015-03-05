@@ -68,6 +68,7 @@
 			
 			# Pick Reference = Max log Likelihood
 			wml<-which.max(out_trim$Loglike)
+#wml<-length(out_trim$Loglike)
 			Zref<-factor(out_trim$Zs[,	wml], levels=1:K,ordered=FALSE) 
 			if (LineUpBy==1){	
 				FinalOrderChoice<-order(out_trim$Ps[wml,], decreasing=TRUE)		
@@ -105,7 +106,7 @@
 			
 				#
 
-
+				perfect<-'NA'
 
 			# storage dataframes:
 			AllPars<-data.frame('Iteration'=NA, 'k'=NA, 'Ps'=NA, 'Mu'=NA, 'Sig'=NA)[numeric(0), ]
@@ -121,13 +122,14 @@
 				getCandi<-function(x) { as.numeric(as.character(row.names(as.matrix(x))[x])) }
 				ListCandi<- apply(CandiCells, 1, getCandi)
 				
+
 				#IF its a matrix, turn into list. If its a single choice, go fast.
 				# R stuff to make sure it deals with inputs correctly
 				if(class(ListCandi)=='matrix'){
 				ListCandi<-split(ListCandi, rep(1:ncol(ListCandi), each = nrow(ListCandi)))
 				Candies<-expand.grid(ListCandi)  # each row is a labelling
 				names(Candies)<-row.names(CandiCells)   # RAAAAH
-				} else if (class(ListCandi)=='numeric'){
+				} 				else if (class(ListCandi)=='numeric'){
 				Candies<-ListCandi
 				} else {
 				Candies<-expand.grid(ListCandi)  # each row is a labelling
@@ -135,21 +137,36 @@
 				}
 
 				namesCandies<-names(Candies)
-				# Catch if no appropriate seperation available at all, check all permutations. Only occurs in really bad models with bad convergence.				
-				if(class(Candies)=='data.frame'){
+				# Catch if no appropriate seperation available at all, check all permutations. Only occurs in really bad models with bad convergence.	
+				#if(class(Candies)=='numeric'){ if( unique(Candies)<length(row.names(CandiCells))) { 
+				# Candies<- permutations(K)}  }
+
+					if(class(Candies)=='data.frame'){
 				if  ( max(sapply(apply(Candies, 1, unique), length))<length(row.names(CandiCells))){
-					Candies<- permutations(K)}
+					NumEmptyK<-length(non0ref)
+					Candies<-matrix(as.numeric(names(Candies)[permutations(NumEmptyK)]), ncol=NumEmptyK, byrow='TRUE')
+
+				#	Candies<- permutations(K)
+				}
 					}else{
-						if  (length(unique(Candies))<length(row.names(CandiCells))){
-					Candies<- permutations(K)}
-					} 
+				if  (length(unique(Candies))<length(row.names(CandiCells))){
+					NumEmptyK<-length(non0ref)
+					Candies<-matrix(as.numeric(colnames(CandiCells)[permutations(NumEmptyK)]), ncol=NumEmptyK, byrow='TRUE')
+colnames(Candies)<- rownames(CandiCells)
+
+					#Candies<- permutations(K)}
+					} }
 
 				MinusRefPars<-function(x) 	{ 
-					flp<- as.numeric(  row.names(CandiCells)[unlist(Candies[x,])])
+					flp<- na.omit( as.numeric(  row.names(CandiCells)[unlist(Candies[x,])]))
 						if(length(unique(flp))<length(flp)) { Inf
 						} else {sum(abs( (refComp	-  c(out_trim$P[.iter,flp], out_trim$Mu[.iter,flp],out_trim$Sig[.iter,flp]))/refComp))	}}
 											
-				if( sum( apply(CandiCells, 1, sum)) >  dim(CandiCells)[1] ){
+#	if( sum( apply(CandiCells, 1, sum)) >  dim(CandiCells)[1] ){
+#	if( dim(Candies)[1]>1){
+#	if( dim(matrix(Candies, byrow=TRUE, ncol=NumEmptyK))[1]>1){
+#	if( sum(apply(CandiCells, 2, function(x) sum(x=="TRUE"))) >  dim(CandiCells)[1]){
+if(sum(apply(CandiCells, 2, function(x) sum(x=="TRUE")==1)) != dim(CandiCells)[1]){
 					BestOne<-which.min( sapply(1:dim(Candies)[1] , MinusRefPars))  # find the best perm out of options
 					BestOne<-Candies[BestOne,]
 					} else {BestOne<- Candies }   # chose this one if no comparing needed

@@ -6,7 +6,7 @@
 \usage{
 PostProcUnivariate_later(Grun, mydata, LineUp = 1, prep = 10000,
   Propmin = 0.05, isSim = TRUE, simlabel = "sim", savelabel = "PPplot",
-  nEnd = 2000)
+  nEnd = 2000, PlotType = "Boxplot")
 }
 \arguments{
 \item{v}{and s}

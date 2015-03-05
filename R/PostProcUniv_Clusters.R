@@ -38,13 +38,11 @@ PostProcUniv_Clusters<-function( Grun,  mydata,LineUp=1,Propmin=0.05, isSim=TRUE
 		GrunK0$SteadyScore<-	Grun$SteadyScore[.iterK0]
 
 		## 2. unswitch
-		GrunK0us<-ZmixUnderConstruction::Zswitch_univ(GrunK0, LineUp,Propmin )
+		GrunK0us<-ZmixUnderConstruction::QuickSwitch_allPars(GrunK0, LineUp,Propmin )
 		GrunK0us_FIN[[.K0]]<-GrunK0us
 
 		maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
 		 FinZHats[[.K0]]<- factor( apply(t(GrunK0us$Zs), 2,maxZ))
-		
-		
 		}
 
 		do.call(rbind, FinZHats)
