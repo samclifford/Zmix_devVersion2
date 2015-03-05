@@ -4,7 +4,7 @@
 \alias{PostProc_CSIRO}
 \title{PostProcessing function univ}
 \usage{
-PostProc_CSIRO(Grun, mydata, LineUp = 1, prep = 10000, Propmin = 0.05,
+PostProc_CSIRO(Grun, mydata, LineUp = 1, prep = 10000, Propmin = 0.01,
   isSim = TRUE, simlabel = "sim", savelabel = "PPplot", nEnd = 2000,
   PlotType = "Boxplot")
 }
