@@ -102,17 +102,19 @@
 			Zref<-factor(Zref)
 			levels(Zref)<- c(1:K)[order(non0ref)]
 			#levels(Zref)<- c(1:K)[order(FinalOrderChoice)]
-			Zref<- factor(Zref,levels(Zref)[order(levels(Zref))])
+			Zref<- factor(Zref, levels=levels(Zref)[order(levels(Zref))])
 			
 				#
-
-				perfect<-'NA'
-
 			# storage dataframes:
 			AllPars<-data.frame('Iteration'=NA, 'k'=NA, 'Ps'=NA, 'Mu'=NA, 'Sig'=NA)[numeric(0), ]
-			Zfixed<-out_trim$Zs
+			Zfixed<-matrix(data=NA, nrow=dim(out_trim$Zs)[1], ncol=dim(out_trim$Zs)[2])
+
+
+
+
 			#for each iteration
 			for(.iter in 1:dim(out_trim$Zs)[2]){
+		#	for(.iter in 1:74){
 				
 				#Store current states
 				Znow<-factor(out_trim$Zs[,.iter])    
@@ -129,7 +131,7 @@
 				ListCandi<-split(ListCandi, rep(1:ncol(ListCandi), each = nrow(ListCandi)))
 				Candies<-expand.grid(ListCandi)  # each row is a labelling
 				names(Candies)<-row.names(CandiCells)   # RAAAAH
-				} 				else if (class(ListCandi)=='numeric'){
+				}else if (class(ListCandi)=='numeric'){
 				Candies<-ListCandi
 				} else {
 				Candies<-expand.grid(ListCandi)  # each row is a labelling
@@ -173,7 +175,8 @@ if(sum(apply(CandiCells, 2, function(x) sum(x=="TRUE")==1)) != dim(CandiCells)[1
 				if(is.null(names(BestOne))) {names(BestOne)<-namesCandies}
 	
 				# Allocations
-				Znew<-Znow; levels(Znew)<-as.numeric(BestOne)
+				Znew<-Znow
+				levels(Znew)<-as.numeric(BestOne)
 				Zfixed[,.iter]<-as.numeric(as.character(Znew))
 				# Parameters
 				combinePars<-cbind(.iter,as.numeric(BestOne),  out_trim$Ps[.iter,as.numeric(names(BestOne))],out_trim$Mu[.iter,as.numeric(names(BestOne))], out_trim$Sig[.iter,as.numeric(names(BestOne))] )[order(as.numeric(BestOne), decreasing=FALSE),]
@@ -184,7 +187,7 @@ if(sum(apply(CandiCells, 2, function(x) sum(x=="TRUE")==1)) != dim(CandiCells)[1
 			# sumarise Zs (find max)
 			maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
 			Zhat<- factor( apply(t(Zfixed), 2,maxZ))
-			levels(Zhat)<- levels(Zhat)<-as.character(BestOne)
+			 levels(Zhat)<-as.character(BestOne)
 			return(list('Pars'=AllPars, 'Zs'=Zfixed))
 			}
 		
