@@ -114,8 +114,8 @@ if(K0[.K0]>1){
 		}
 		Final_Pars<-do.call(rbind, K0estimates)
 		print(p_vals)
-		Result<-list( Final_Pars, p_vals, "Z"=Zhat)
-		save(Result, file=paste("PPresults_", savelabel ,".RDATA", sep=""))
+		#Result<-list( Final_Pars, p_vals, "Z"=Zhat)
+	#save(Result, file=paste("PPresults_", savelabel ,".RDATA", sep=""))
 		return(list( Final_Pars, p_vals, "Z"=Zhat))
 
 
