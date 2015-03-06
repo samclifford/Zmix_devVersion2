@@ -8,7 +8,7 @@
 #' #nope
 
 
-PostProc_mvn<-function( Grun,  mydata,Propmin=0.05, isSim=TRUE, simlabel="sim", savelabel="PPplot"){
+PostProc_mvn_PD<-function( Grun,  mydata, rawData ,Propmin=0.05, isSim=FALSE, simlabel="sim", savelabel="PPplot"){
      		require(wq)
 		ifelse(isSim==TRUE, Y<-mydata$Y,  Y<-mydata)
 
@@ -21,7 +21,7 @@ PostProc_mvn<-function( Grun,  mydata,Propmin=0.05, isSim=TRUE, simlabel="sim", 
 		
 		# SAVE table of tests, parameter estimates and clustering (Z's)
 		 p_vals<-data.frame("K0"=K0, "PropIters"=as.numeric(table(Grun$SteadyScore))/dim(Grun$P)[1],
-			 "RAND"=NA, "MAE"=NA, "MSE"=NA,"Pmin"=NA, "Pmax"=NA, "Concordance"=NA, "MAPE"=NA, "MSPE"=NA)
+			  "MAE"=NA, "MSE"=NA,"Pmin"=NA, "Pmax"=NA, "Concordance"=NA, "MAPE"=NA, "MSPE"=NA)
 						
 		K0estimates<-vector("list", length(K0))
 		GrunK0us_FIN<-vector("list", length(K0))
@@ -49,12 +49,7 @@ PostProc_mvn<-function( Grun,  mydata,Propmin=0.05, isSim=TRUE, simlabel="sim", 
 		
 
 			## 3. RAND	
-			if(isSim==TRUE){
-			#maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
-			#Zhat<- factor( apply(t(GrunK0us$Zs), 2,maxZ));	
-			p_vals$RAND[.K0]<-(sum(mydata$Z==Zhat)/n) 
-			} else { p_vals$RAND[.K0]<-'NA'}
-	
+			
 		names(GrunK0us$Pars)[1]<-'k'
 			GrunK0us$Pars$k<-as.numeric(as.character(GrunK0us$Pars$k))
 
@@ -89,14 +84,27 @@ Clusplot2<-ggplot( cbind(Y, "Cluster"=Zhat), aes(y=Y_1, x=Y_3, shape=Cluster, co
 Clusplot3<-ggplot( cbind(Y, "Cluster"=Zhat), aes(y=Y_2, x=Y_3, shape=Cluster, colour=Cluster))+geom_point()+theme_bw()
 
 
-		pdf( file= paste("PPplots_", savelabel ,"K_", K0[.K0] ,".pdf", sep=""), width=10, height=5)
+# plot curves
+# HERE
+#
+#
+rawData<-melt(rawData)
+rawData<-cbind("Time"=rep(1:89, 192), rawData)
+zzs<-data.frame( 'variable'=unique(PD_rawY1_m$variable),'Zs'=Zhat)
+rawData<-merge(rawData, zzs)
+
+
+curvePlot<-ggplot(PD_rawY1_m, aes(x=Time, y=value, group=variable))+geom_line(aes(colour=Zs))+ggtitle("Original data with clusters")+theme_bw()
+
+		pdf( file= paste("PPplots_", savelabel ,"K_", K0[.K0] ,".pdf", sep=""), width=8, height=10)
  		print( wq::layOut(
  		list(plot_P, 	1, 1),  
 	        	list(plot_Mu1, 	1, 2),   
 	         	list(plot_Mu2,	1,3),
 	         	list(Clusplot,	2,1),
 	         	list(Clusplot2,	2,2),
-	         	list(Clusplot3,	2,3)
+	         	list(Clusplot3,	2,3),
+	         	list(curvePlot, 3, 1:3)
 	        )
  		)
 		dev.off()

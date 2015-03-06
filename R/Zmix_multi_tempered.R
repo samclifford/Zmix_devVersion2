@@ -207,6 +207,6 @@
 	     				SteadyScore<-SteadyScore$K[c(iter-EndSize+1):iter]
 							
 				
-				  	return(list(Mu = mu,Cov=covs, P= ps,  Zs=zs, Y=Out$Y, Loglike=Loglike, SteadyScore=SteadyScore))
+				  	return(list(Mu = mu,Cov=covs, P= ps,  Zs=zs, Y=YZ, Loglike=Loglike, SteadyScore=SteadyScore))
 #					return(trimit(bigres, nEnd=EndSize))
 					 }

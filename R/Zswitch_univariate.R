@@ -143,27 +143,27 @@
 				#if(class(Candies)=='numeric'){ if( unique(Candies)<length(row.names(CandiCells))) { 
 				# Candies<- permutations(K)}  }
 
-					if(class(Candies)=='data.frame'){
-				if  ( max(sapply(apply(Candies, 1, unique), length))<length(row.names(CandiCells))){
-					NumEmptyK<-length(non0ref)
-					Candies<-matrix(as.numeric(names(Candies)[permutations(NumEmptyK)]), ncol=NumEmptyK, byrow='TRUE')
+		if(class(Candies)=='data.frame' | class(Candies)=='matrix'){
+		if  ( max(sapply(apply(Candies, 1, unique), length))<length(row.names(CandiCells))){
+		NumEmptyK<-length(non0ref)
+		Candies<-matrix(as.numeric(names(Candies)[permutations(NumEmptyK)]), ncol=NumEmptyK, byrow='TRUE')
+		
+		#	Candies<- permutations(K)
+		}
+		}else{
+		if  (length(unique(Candies))<length(row.names(CandiCells))){
+		NumEmptyK<-length(non0ref)
+		Candies<-matrix(as.numeric(colnames(CandiCells)[permutations(NumEmptyK)]), ncol=NumEmptyK, byrow='TRUE')
+		colnames(Candies)<- rownames(CandiCells)
 
-				#	Candies<- permutations(K)
-				}
-					}else{
-				if  (length(unique(Candies))<length(row.names(CandiCells))){
-					NumEmptyK<-length(non0ref)
-					Candies<-matrix(as.numeric(colnames(CandiCells)[permutations(NumEmptyK)]), ncol=NumEmptyK, byrow='TRUE')
-colnames(Candies)<- rownames(CandiCells)
+		#Candies<- permutations(K)}
+		} }
 
-					#Candies<- permutations(K)}
-					} }
-
-				MinusRefPars<-function(x) 	{ 
-					flp<- na.omit( as.numeric(  row.names(CandiCells)[unlist(Candies[x,])]))
-						if(length(unique(flp))<length(flp)) { Inf
-						} else {sum(abs( (refComp	-  c(out_trim$P[.iter,flp], out_trim$Mu[.iter,flp],out_trim$Sig[.iter,flp]))/refComp))	}}
-											
+	MinusRefPars<-function(x) 	{ 
+	flp<- na.omit( as.numeric(  row.names(CandiCells)[unlist(Candies[x,])]))
+		if(length(unique(flp))<length(flp)) { Inf
+		} else {sum(abs( (refComp	-  c(out_trim$P[.iter,flp], out_trim$Mu[.iter,flp],out_trim$Sig[.iter,flp]))/refComp))	}}
+									
 #	if( sum( apply(CandiCells, 1, sum)) >  dim(CandiCells)[1] ){
 #	if( dim(Candies)[1]>1){
 #	if( dim(matrix(Candies, byrow=TRUE, ncol=NumEmptyK))[1]>1){
