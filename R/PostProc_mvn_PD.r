@@ -114,3 +114,5 @@ curvePlot<-ggplot(.rawData, aes(x=Time, y=value, group=variable))+geom_line(aes(
 		Final_Pars<-do.call(rbind, K0estimates)
 		return(list( Final_Pars, p_vals, "Z"=Zhat))
 		}
+
+		

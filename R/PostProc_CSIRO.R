@@ -25,7 +25,7 @@ PostProc_CSIRO<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.01, isSim=
 						
 		K0estimates<-vector("list", length(K0))
 		GrunK0us_FIN<-vector("list", length(K0))
-
+		ZHAT<-vector("list", length(K0))
 	#for each K0:
 		for ( .K0 in 1:length(K0)){
 		GrunK0<-Grun
@@ -75,7 +75,7 @@ PostProc_CSIRO<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.01, isSim=
 		p4<-ggAllocationPlot(GrunK0us$Zs, Y )
 			maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
 		    Zhat<- factor( apply(t(GrunK0us$Zs), 2,maxZ))
-		
+		ZHAT[[.K0]]<-Zhat
 			## 3. , MSE	
 			
 		GrunK0us$Pars$k<-as.numeric(as.character(GrunK0us$Pars$k))
