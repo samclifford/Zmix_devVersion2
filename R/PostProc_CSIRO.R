@@ -75,7 +75,7 @@ PostProc_CSIRO<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.01, isSim=
 		p4<-ggAllocationPlot(GrunK0us$Zs, Y )
 			maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
 		    Zhat<- factor( apply(t(GrunK0us$Zs), 2,maxZ))
-		ZHAT[[.K0]]<-Zhat
+		  ZHAT[[.K0]]<-Zhat
 			## 3. , MSE	
 			
 		GrunK0us$Pars$k<-as.numeric(as.character(GrunK0us$Pars$k))
@@ -116,7 +116,7 @@ if(K0[.K0]>1){
 		print(p_vals)
 		#Result<-list( Final_Pars, p_vals, "Z"=Zhat)
 	#save(Result, file=paste("PPresults_", savelabel ,".RDATA", sep=""))
-		return(list( Final_Pars, p_vals, "Z"=Zhat))
+		return(list( Final_Pars, p_vals, "Z"=ZHAT))
 
 
 		}
