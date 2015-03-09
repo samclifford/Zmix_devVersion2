@@ -26,6 +26,7 @@ PostProc_mvn_PD<-function( Grun,  mydata, rawData ,Propmin=0.05, isSim=FALSE, si
 						
 		K0estimates<-vector("list", length(K0))
 		GrunK0us_FIN<-vector("list", length(K0))
+		ZHAT<-vector("list", length(K0))
 
 	#for each K0:
 		for ( .K0 in 1:length(K0)){
@@ -47,7 +48,8 @@ PostProc_mvn_PD<-function( Grun,  mydata, rawData ,Propmin=0.05, isSim=FALSE, si
 	
 		maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
 		Zhat<- factor( apply(t(GrunK0us$Zs), 1,maxZ))
-		
+		  ZHAT[[.K0]]<-Zhat
+
 
 			## 3. RAND	
 			
@@ -112,7 +114,7 @@ curvePlot<-ggplot(.rawData, aes(x=Time, y=value, group=variable))+geom_line(aes(
 
 		}
 		Final_Pars<-do.call(rbind, K0estimates)
-		return(list( Final_Pars, p_vals, "Z"=Zhat))
+		return(list( Final_Pars, p_vals, ZHAT))
 		}
 
 		

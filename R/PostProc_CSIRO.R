@@ -116,7 +116,7 @@ if(K0[.K0]>1){
 		print(p_vals)
 		#Result<-list( Final_Pars, p_vals, "Z"=Zhat)
 	#save(Result, file=paste("PPresults_", savelabel ,".RDATA", sep=""))
-		return(list( Final_Pars, p_vals, "Z"=ZHAT))
+		return(list( Final_Pars, p_vals, ZHAT))
 
 
 		}
