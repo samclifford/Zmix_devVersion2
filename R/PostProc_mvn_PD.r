@@ -11,11 +11,12 @@
 PostProc_mvn_PD<-function( Grun,  mydata, rawData ,Propmin=0.05, isSim=FALSE, simlabel="sim", savelabel="PPplot"){
      		require(wq)
 		ifelse(isSim==TRUE, Y<-mydata$Y,  Y<-mydata)
-
+		
 		n<-dim(Y)[1] 
 		r<-dim(Y)[2]
 		k<-dim(Grun$P)[2]	
-	
+		Y<-as.data.frame(Y)
+		names(Y)<-paste("Y", 1:r, sep="_")
 		## 1. split by K0
 		K0<-as.numeric(names(table(Grun$SteadyScore)))
 		
@@ -31,17 +32,17 @@ PostProc_mvn_PD<-function( Grun,  mydata, rawData ,Propmin=0.05, isSim=FALSE, si
 		
 		GrunK0<-Grun
 		# split data by K0
-		.iterK0<-c(1:dim(Grun$P)[1])[Grun$SteadyScore==K0[.K0]]
+		SteadyScore<-sapply(apply(Grun$Zs, 1, table), function(x) sum(x>0))
+		.iterK0<-c(1:dim(Grun$P)[1])[SteadyScore==K0[.K0]]
 		GrunK0$Mu<-Grun$Mu[ Grun$Mu$Iteration %in% (min(Grun$Mu$Iteration)+.iterK0-1),]
 		GrunK0$Cov<-Grun$Cov[ Grun$Mu$Iteration %in% (min(Grun$Cov$Iteration)+.iterK0-1),]
-
 		GrunK0$P<-	Grun$P[.iterK0,]
 		GrunK0$Loglike<-	Grun$Loglike[.iterK0]
 		GrunK0$Zs<-	Grun$Zs[.iterK0,]
-		GrunK0$SteadyScore<-	Grun$SteadyScore[.iterK0]
+		GrunK0$SteadyScore<-SteadyScore[.iterK0]
 
 		## 2. unswitch
-		GrunK0us<-QuickSwitchMVN(GrunK0,Propmin )
+		GrunK0us=QuickSwitchMVN(GrunK0,Propmin )
 		GrunK0us_FIN[[.K0]]<-GrunK0us
 	
 		maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
@@ -78,8 +79,8 @@ plot_Mu2<-ggplot(data=GrunK0us$Pars, aes(y=Mu_2, x=k))  + geom_boxplot(aes(fill=
 
 	
 # plot clusters
-names(Y)<-paste("Y", 1:r, sep="_")
-Clusplot<-ggplot( cbind(Y, "Cluster"=Zhat), aes(y=Y_1, x=Y_2, shape=Cluster, colour=Cluster))+geom_point()+theme_bw()+  theme(legend.position = "none")
+
+Clusplot<-ggplot( data.frame(Y, "Cluster"=Zhat), aes(y=Y_1, x=Y_2, shape=Cluster, colour=Cluster))+geom_point()+theme_bw()+  theme(legend.position = "none")
 Clusplot2<-ggplot( cbind(Y, "Cluster"=Zhat), aes(y=Y_1, x=Y_3, shape=Cluster, colour=Cluster))+geom_point()+theme_bw()+  theme(legend.position = "none")
 Clusplot3<-ggplot( cbind(Y, "Cluster"=Zhat), aes(y=Y_2, x=Y_3, shape=Cluster, colour=Cluster))+geom_point()+theme_bw()
 
@@ -88,13 +89,13 @@ Clusplot3<-ggplot( cbind(Y, "Cluster"=Zhat), aes(y=Y_2, x=Y_3, shape=Cluster, co
 # HERE
 #
 #
-rawData<-melt(rawData)
-rawData<-cbind("Time"=rep(1:89, 192), rawData)
-zzs<-data.frame( 'variable'=unique(PD_rawY1_m$variable),'Zs'=Zhat)
-rawData<-merge(rawData, zzs)
+.rawData<-melt(rawData)
+.rawData<-cbind("Time"=rep(1:dim(rawData)[1], dim(rawData)[2]), .rawData)
+zzs<-data.frame( 'variable'=unique(.rawData$variable),'Zs'=Zhat)
+.rawData<-merge(.rawData, zzs, by='variable')
 
 
-curvePlot<-ggplot(PD_rawY1_m, aes(x=Time, y=value, group=variable))+geom_line(aes(colour=Zs))+ggtitle("Original data with clusters")+theme_bw()
+curvePlot<-ggplot(.rawData, aes(x=Time, y=value, group=variable))+geom_line(aes(colour=Zs), alpha=0.6)+ggtitle("Original data with clusters")+theme_bw()
 
 		pdf( file= paste("PPplots_", savelabel ,"K_", K0[.K0] ,".pdf", sep=""), width=8, height=10)
  		print( wq::layOut(
