@@ -146,8 +146,11 @@
 		if(class(Candies)=='data.frame' | class(Candies)=='matrix'){
 		if  ( max(sapply(apply(Candies, 1, unique), length))<length(row.names(CandiCells))){
 		NumEmptyK<-length(non0ref)
-		Candies<-matrix(as.numeric(names(Candies)[permutations(NumEmptyK)]), ncol=NumEmptyK, byrow='TRUE')
-		
+		#Candies<-matrix(as.numeric(names(Candies)[permutations(NumEmptyK)]), ncol=NumEmptyK, byrow='TRUE')
+	#	Candies<-matrix(c(1[permutations(NumEmptyK)]), ncol=NumEmptyK, byrow='TRUE')
+		Candies<-matrix(as.numeric(colnames(CandiCells)[permutations(NumEmptyK)]), ncol=NumEmptyK, byrow='TRUE')
+				colnames(Candies)<- rownames(CandiCells)
+
 		#	Candies<- permutations(K)
 		}
 		}else{

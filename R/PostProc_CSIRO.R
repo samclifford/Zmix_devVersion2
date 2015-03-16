@@ -8,7 +8,7 @@
 #' #nope
 
 
-PostProc_CSIRO<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.01, isSim=TRUE, simlabel="sim", savelabel="PPplot", nEnd=2000, PlotType="Boxplot"){
+PostProc_CSIRO<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.01, isSim=FALSE, simlabel="sim", savelabel="PPplot", nEnd=2000, PlotType="Boxplot"){
 	require(wq)
 		Grun<-trimit(Out=Grun, nEnd)
 		ifelse(isSim==TRUE, Y<-mydata$Y,  Y<-mydata)
@@ -26,8 +26,10 @@ PostProc_CSIRO<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.01, isSim=
 		K0estimates<-vector("list", length(K0))
 		GrunK0us_FIN<-vector("list", length(K0))
 		ZHAT<-vector("list", length(K0))
+		ZTable<-vector("list", length(K0))
 	#for each K0:
 		for ( .K0 in 1:length(K0)){
+	if( p_vals$Probability[.K0]>0.001){
 		GrunK0<-Grun
 		# split data by K0
 		.iterK0<-c(1:dim(Grun$Ps)[1])[Grun$SteadyScore==K0[.K0]]
@@ -40,7 +42,7 @@ PostProc_CSIRO<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.01, isSim=
 
 		## 2. unswitch
 		GrunK0us<-QuickSwitch_allPars(GrunK0, LineUp,Propmin )
-		GrunK0us_FIN[[.K0]]<-GrunK0us
+#		GrunK0us_FIN[[.K0]]<-GrunK0us
 
 # PLOTS density pars
 	GrunK0us$Pars$k<-as.factor(GrunK0us$Pars$k)
@@ -55,6 +57,18 @@ PostProc_CSIRO<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.01, isSim=
 		p2<-ggplot(data=GrunK0us$Pars, aes(y=Mu, x=k))+ geom_boxplot(aes(fill=k), outlier.shape = NA)+ ylab("")+xlab("Components (k)")  +theme_bw()+  theme(legend.position = "none")+ggtitle(ggtitle(bquote(atop(italic( "Posterior summaries"), atop("Means")))))
 		p3<-ggplot(data=GrunK0us$Pars, aes(y=Sig, x=k)) + geom_boxplot(aes(fill=k), outlier.shape = NA)+ ylab("")+xlab("Components (k)")  +theme_bw()+  theme(legend.position = "none")+ggtitle(ggtitle(bquote(atop(italic(paste( "p(K=", .(K0[.K0]), ")=", .(p_vals$Probability[.K0]), sep="")), atop("Variances")))))
 }
+	
+
+	# ALOC  PROBABILITIES
+Ztemp<-GrunK0us$Zs
+
+ZTable[[.K0]]<-data.frame("myY"=NULL, "k"=NULL, "Prob"=NULL)
+			maxK<-max(Ztemp)
+			for (i in 1:dim(Ztemp)[1]){rr<-factor(Ztemp[i,], levels=1:maxK)
+			ZTable[[.K0]]<-rbind(ZTable[[.K0]],cbind(i,c(1:maxK), matrix(table(rr)/ length(rr) )))    }
+			names(ZTable[[.K0]])<-c("Yid", "k", "Prob")
+				ZTable[[.K0]]$k<-as.factor(ZTable[[.K0]]$k)
+
 
 		ggAllocationPlot<-function( outZ, myY){
 			grr<-outZ[order(myY),]
@@ -111,12 +125,10 @@ if(K0[.K0]>1){
 		dev.off()
 		}
 
-		}
+		}}
 		Final_Pars<-do.call(rbind, K0estimates)
 		print(p_vals)
 		#Result<-list( Final_Pars, p_vals, "Z"=Zhat)
 	#save(Result, file=paste("PPresults_", savelabel ,".RDATA", sep=""))
-		return(list( Final_Pars, p_vals, ZHAT))
-
-
+		return(list( Final_Pars, p_vals, ZHAT, ZTable))
 		}
