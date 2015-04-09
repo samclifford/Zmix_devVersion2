@@ -8,7 +8,7 @@
 #' #nope
 
 
-PostProc_CSIRO<-function( Grun,  mydata,LineUp=1,prep=10000,Propmin=0.01, isSim=FALSE, simlabel="sim", savelabel="PPplot", nEnd=2000, PlotType="Boxplot"){
+PostProc_CSIRO<-function( Grun,  mydata,LineUp=1, prep=10000,Propmin=0.01, isSim=FALSE, simlabel="sim", savelabel="PPplot", nEnd=2000, PlotType="Boxplot"){
 	require(wq)
 		Grun<-trimit(Out=Grun, nEnd)
 		ifelse(isSim==TRUE, Y<-mydata$Y,  Y<-mydata)
