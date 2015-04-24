@@ -56,11 +56,14 @@ PostPredFunk<-function(.GrunK0us, .Zetc, .Y, .prep , .simlabel){
 
 				MSPE<-mean(MSPE_dist)
 				MAPE<-mean(MAPE_dist)
-
+				
+				ForPlot<-reshape2::melt(.yrep)
+				names(ForPlot)<-c("Var1", "Var2", "value")
+			
 				### 4.3 Plot data VS replicates	
 				predplot<-ggplot(data.frame("Y"=.Y, "n"=c(1:n)), aes(x=Y))  + 
 				#geom_histogram(aes(y=..density..),  colour="red", fill="white")+
-				geom_line(data=melt(.yrep),stat="density", aes(x=value,group=X1), size=0.5, color="blue", alpha=0.1)+
+				geom_line(data=ForPlot,stat="density", aes(x=value,group=Var1), size=0.5, color="blue", alpha=0.1)+
 				geom_density(color="red", size=1, linetype="dashed")+ geom_hline(yintercept=0, colour="white", size=1)+
 				theme_bw()+ggtitle("Predicted densities")
 				#ggsave(plot=predplot, filename= paste("PredictiveDensities_",.simlabel,"_K0",K,".bmp", sep="") ,width=10, height=10, units='cm' )

@@ -7,7 +7,7 @@
 #' @examples
 #' #not run
 
-	QuickSwitchMVN<-function(MVNResult,PropMin=0.05){
+	QuickSwitchMVN<-function(MVNResult,PropMin=0.01){
 			K<-dim(MVNResult$P)[2]
 			rdim<-dim(MVNResult$Y)[2]
 
@@ -21,7 +21,6 @@
 			levels(Zref)<- c(1:K)[order(FinalOrderChoice)]
 			Zref<- factor(Zref, levels=levels(Zref)[order(levels(Zref))])  # tidy up factor levels
 # rename iterations
-
  
  MVNResult$Mu$Iteration<-as.vector(sapply( c(1: (length(MVNResult$Mu$Iteration)/K) ),function(x) rep(x, K))	)
  MVNResult$Cov$Iteration<-as.vector(sapply( c(1: (length(MVNResult$Cov$Iteration)/K) ),function(x) rep(x, K))	)
@@ -45,7 +44,6 @@
 		for(.iter in 1:(dim(MVNResult$Zs)[1])){   
 				
 #iterIDnow<-iterID1-1+.iter
-
 			Znow<-factor(MVNResult$Zs[.iter,])  
 			CandiCells<-table(Znow , Zref)/apply(table(Znow , Zref), 1, sum)>PropMin
 			getCandi<-function(x) { as.numeric(as.character(row.names(as.matrix(x))[x])) }
