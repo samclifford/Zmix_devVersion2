@@ -4,7 +4,7 @@
 \alias{QuickSwitchMVN}
 \title{Label switch fix for Multivariate Normals}
 \usage{
-QuickSwitchMVN(MVNResult, PropMin = 0.05)
+QuickSwitchMVN(MVNResult, PropMin = 0.01)
 }
 \arguments{
 \item{v}{and s}

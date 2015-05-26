@@ -11,28 +11,28 @@
 PostProc_mvn_PD<-function( Grun,  mydata, rawData ,Propmin=0.05, isSim=FALSE, simlabel="sim", savelabel="PPplot"){
      		require(wq)
 		ifelse(isSim==TRUE, Y<-mydata$Y,  Y<-mydata)
-		
-		n<-dim(Y)[1] 
+
+		n<-dim(Y)[1]
 		r<-dim(Y)[2]
-		k<-dim(Grun$P)[2]	
+		k<-dim(Grun$P)[2]
 		Y<-as.data.frame(Y)
 		names(Y)<-paste("Y", 1:r, sep="_")
 		## 1. split by K0
 		K0<-as.numeric(names(table(Grun$SteadyScore)))
-		
+
 		# SAVE table of tests, parameter estimates and clustering (Z's)
 		 p_vals<-data.frame("K0"=K0, "PropIters"=as.numeric(table(Grun$SteadyScore))/dim(Grun$P)[1],
 			  "MAE"=NA, "MSE"=NA,"Pmin"=NA, "Pmax"=NA, "Concordance"=NA, "MAPE"=NA, "MSPE"=NA)
-						
+
 		K0estimates<-vector("list", length(K0))
 		GrunK0us_FIN<-vector("list", length(K0))
 		ZHAT<-vector("list", length(K0))
 
 	#for each K0:
-		for ( .K0 in 1:length(K0)){
-		
+		#for ( .K0 in 1:length(K0)){
+		 .K0<-which.max(p_vals$PropIters)  #most likely group only
 		GrunK0<-Grun
-		# split data by K0
+		# split data by K0 (the most likely)
 		SteadyScore<-sapply(apply(Grun$Zs, 1, table), function(x) sum(x>0))
 		.iterK0<-c(1:dim(Grun$P)[1])[SteadyScore==K0[.K0]]
 		GrunK0$Mu<-Grun$Mu[ Grun$Mu$Iteration %in% (min(Grun$Mu$Iteration)+.iterK0-1),]
@@ -45,21 +45,21 @@ PostProc_mvn_PD<-function( Grun,  mydata, rawData ,Propmin=0.05, isSim=FALSE, si
 		## 2. unswitch
 		GrunK0us=QuickSwitchMVN(GrunK0,Propmin )
 		GrunK0us_FIN[[.K0]]<-GrunK0us
-	
+
 		maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
 		Zhat<- factor( apply(t(GrunK0us$Zs), 1,maxZ))
 		  ZHAT[[.K0]]<-Zhat
 
 
-			## 3. RAND	
-			
+			## 3. RAND
+
 		names(GrunK0us$Pars)[1]<-'k'
 			GrunK0us$Pars$k<-as.numeric(as.character(GrunK0us$Pars$k))
 
 			# COMPUTE means of parameters
 			#.par<-melt(GrunK0us$Pars, id.vars=c("Iteration", "k"))
 		#	Zetc<-aggregate( value~variable+factor(k), mean ,data=.par)
-	        
+
 		# CI
 		.par<-melt(GrunK0us$Pars, id.vars=c("Iteration", "k"))
 		theta<-aggregate( value~variable+factor(k), mean ,data=.par)
@@ -79,7 +79,7 @@ plot_Mu1<-ggplot(data=GrunK0us$Pars, aes(y=Mu_1, x=k))  + geom_boxplot(aes(fill=
 plot_Mu2<-ggplot(data=GrunK0us$Pars, aes(y=Mu_2, x=k))  + geom_boxplot(aes(fill=k), outlier.shape = NA)+
 		ggtitle(bquote(atop(italic(paste( "p(K=", .(K0[.K0]), ")=",  .(p_vals$PropIters[.K0]), sep="")), atop("Means (Dim 2)"))))+ylab("Mean (Dim 2)")+xlab("Cluster (k)") +theme_bw()+  theme(legend.position = "none")
 
-	
+
 # plot clusters
 
 Clusplot<-ggplot( data.frame(Y, "Cluster"=Zhat), aes(y=Y_1, x=Y_2, shape=Cluster, colour=Cluster))+geom_point()+theme_bw()+  theme(legend.position = "none")
@@ -101,8 +101,8 @@ curvePlot<-ggplot(.rawData, aes(x=Time, y=value, group=variable))+geom_line(aes(
 
 		pdf( file= paste("PPplots_", savelabel ,"K_", K0[.K0] ,".pdf", sep=""), width=8, height=10)
  		print( wq::layOut(
- 		list(plot_P, 	1, 1),  
-	        	list(plot_Mu1, 	1, 2),   
+ 		list(plot_P, 	1, 1),
+	        	list(plot_Mu1, 	1, 2),
 	         	list(plot_Mu2,	1,3),
 	         	list(Clusplot,	2,1),
 	         	list(Clusplot2,	2,2),
@@ -112,9 +112,8 @@ curvePlot<-ggplot(.rawData, aes(x=Time, y=value, group=variable))+geom_line(aes(
  		)
 		dev.off()
 
-		}
+
 		Final_Pars<-do.call(rbind, K0estimates)
 		return(list( Final_Pars, p_vals, ZHAT))
 		}
 
-		
