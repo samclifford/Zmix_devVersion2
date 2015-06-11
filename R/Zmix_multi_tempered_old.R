@@ -4,7 +4,19 @@
 #' @export
 #' @examples
 #' #not run
-	Zmix_multi_tempered<-function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
+	Zmix_multi_tempered_old<-function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
+
+				#	dMvn <- function(X,mu,Sigma) {
+						#    k <- ncol(X)
+						#    rooti <- backsolve(chol(Sigma),diag(k))
+						#    quads <- colSums((crossprod(rooti,(t(X)-mu)))^2)
+						#    return(exp(-(k/2)*log(2*pi) + sum(log(diag(rooti))) - .5*quads))}
+
+					#dDirichlet<-function (x, alpha, log = FALSE) {
+					#	    dlog = lgamma(sum(alpha)) + sum((alpha - 1) * log(x)) - sum(lgamma(alpha))
+					#	    result = ifelse(!log, exp(dlog), dlog)
+					#	    return(result)
+					#		}
 
 					parallelAccept<-function(w1, w2, a1, a2){
 							w1[w1< 1e-200]<-1e-200   # truncate so super small values dont crash everyting
@@ -16,17 +28,13 @@
 								MH<-min(1,	exp(T1+T2-B1-B2))
 							Ax<-sample(c(1,0), 1, prob=c(MH,1-MH))
 							return(Ax)}
-					CovSample<-function(nsk, WkZk, ybark){   #NEW 11 June 2015
-			 			ck<-c0+nsk
-			 			if (nsk==0) {
-			 				MCMCpack::riwish(c0, C0)
-			 			} else {
-			 				Ck<- C0 +((nsk*n0)/(nsk+n0)*crossprod(ybark-b0)) +WkZk
-			 				MCMCpack::riwish(ck,Ck)
-			 			}
-			 		}
-
-
+					CovSample<-function(nsk, WkZk, ybark){
+			 			ck<-c0+nsk/2
+							if (nsk==0) {
+								solve(rwish(c0, solve(C0)))
+							} else {
+							Ck<-	C0	+0.5*((nsk*n0)/(nsk+n0)*crossprod(ybark-b0)) +0.5*WkZk
+							solve(rwish(ck, solve(Ck)))}}
 					MuSample<-function(newCovLISTk, nsk,WkZk, ybark){
 							newCovLISTk<-matrix(newCovLISTk, nrow=r, byrow=T)
 
@@ -38,32 +46,28 @@
 							rmvnorm(1, t(bk), Bk)
 
 								}}
-					minions<-function(ZZ){
+					minions<-function(ZZ){  # intake classifications
+						# ns
 						IndiZ <- (ZZ == matrix((1:k), nrow = n, ncol = k, byrow = T))
-						ns <- apply(IndiZ,2,sum)  	#  size of each group
-						.Ysplit<-replicate(k, list())	#storage to group Y's
-						WkZ<-	 replicate(k, list(0))	#storage for within group variability
-						ybar<-	 replicate(k, list(0))
-						for (.i in 1:k){
-							.Ysplit[[.i]]<-Y[ZZ==.i,]
-							if (ns[.i]>1){					# for groups with >1 obsevations
-								ybar[[.i]]<- as.matrix(t(apply(.Ysplit[[.i]], 2, mean) ))
-							} else if (ns[.i]==1){
-								ybar[[.i]]<-	t( as.matrix(.Ysplit[[.i]]))
-							} else {
-								ybar[[.i]]<-	NA
-							}
-							#Within group unexplained variability
-							if (ns[.i]==0) {
-								WkZ[[.i]]<-	NA
-							} else if (ns[.i]==1){
+						ns <- apply(IndiZ,2,sum)  #  size of each group
+
+							.Ysplit<-replicate(k, list())	#storage to group Y's
+							WkZ<-	 replicate(k, list(0))	#storage for within group variability
+							ybar<-	 replicate(k, list(0))
+							for (.i in 1:k){					# grouping y's by Zs
+								.Ysplit[[.i]]<-Y[ZZ==.i,]
+								if (ns[.i]>1){					# for groups with >1 obsevations
+							ybar[[.i]]<- as.matrix(t(apply(.Ysplit[[.i]], 2, mean) ))
+								} else if (ns[.i]==1){			# if n=1 mean =y
+							ybar[[.i]]<-	t( as.matrix(.Ysplit[[.i]]))
+								} else {  ybar[[.i]]<-	NA}
+
+							 #Within group unexplained variability
+								if (ns[.i]==0) { WkZ[[.i]]<-	NA	} else if (ns[.i]==1){
 								WkZ[[.i]]<-crossprod(as.matrix(.Ysplit[[.i]]-ybar[[.i]]))
-							} else {
-								for ( .n in 1:ns[.i]){
-									WkZ[[.i]]<-WkZ[[.i]]+ crossprod( .Ysplit[[.i]][.n,]-ybar[[.i]])
-								}
-							}
-						}
+								} else {	for ( .n in 1:ns[.i]){
+								WkZ[[.i]]<-WkZ[[.i]]+ crossprod( .Ysplit[[.i]][.n,]-ybar[[.i]])
+							}}}
 
 							list('ns'=ns,'ybar'=ybar, 'WkZ'=WkZ)}
 
@@ -87,7 +91,7 @@
 					#hyperpars
 					Ck<-	replicate(k, list())
 					b0<-apply(Y,2,mean)
-					c0<-r+1
+					c0<-2.5+(r-1)/2  ; if (c0<r) c0<-r+1
 					C0<-0.75*cov(Y)
 					d<-sum(c(1:r))+r
 
