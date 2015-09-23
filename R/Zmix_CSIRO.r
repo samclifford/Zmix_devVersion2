@@ -8,7 +8,9 @@
 #' #... you know...
 
 Zmix_CSIRO<-function(Y, k=10,iter=5000,    LineUp=2,   Pred_Reps=500,   Zswitch_Sensitivity=0.01,    
-  Plot_Title="Results",   SaveFileName="zmix",   PlotType="Boxplot" , DATA_ADDITIONAL, Yname="Region X"){
+  SaveFileName="zmix",  Yname="Variable", PlotType="Boxplot" , DATA_ADDITIONAL){
+  	Plot_Title=Yname
+
   	tau		<- 	0.01
 	a 		<- 	2.5
 	b 		<- 	2/var(Y)
@@ -16,7 +18,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,    LineUp=2,   Pred_Reps=500,   Zswitch_
 	n 		<- 	length(Y)
 	alphas	<- 	c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))	
 	lambda 	<- 	sum(Y)/n
-	Burn	<- 	iter/2
+	Burn	<- 	iter/3
 	##################
 	# INNER FUNCTIONS
 	##################
@@ -248,7 +250,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,    LineUp=2,   Pred_Reps=500,   Zswitch_
 			ci<-round(aggregate( value~variable+factor(k), quantile,c(0.025, 0.975) ,data=.par)[,3],2)
 			# thetaCI<-cbind( theta[,c(1,2)] , "value"=paste( mu, "(", ci[,1] , "," ,ci[,2] ,")", sep="" ))
 			thetaCI<-data.frame( "variable"= as.factor(theta[,1]) , "k"=theta[,2], "Estimate"=mu, "CI_025"=ci[,1] ,"CI_975"=ci[,2] )
-			K0estimates[[.K0]]<-thetaCI
+			K0estimates[[.K0]]<-cbind(thetaCI, "Model_K0"=K0[[.K0]])
 			# PLOTS density pars
 			if(makePlots==TRUE){
 				GrunK0us$Pars$k<-as.factor(GrunK0us$Pars$k)
@@ -285,7 +287,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,    LineUp=2,   Pred_Reps=500,   Zswitch_
 	Specs<-DATA_ADDITIONAL
 	# number of models found
 	NumModel<-length(K0)
-	Part1<-data.frame( "Region"=RegionName,"Model_ID"=1:length(p_vals$K0),  "Model_K0"=p_vals$K0,  "P_model" =p_vals$Prob)
+	Part1<-data.frame( "Region"=RegionName,"Model_ID"=1:length(p_vals$K0),  "P_model" =p_vals$Prob)
 	# for each model, get allocation probs and join with ids
 	for (ModelID in 1:NumModel){ 	
 		modelK0now<-as.numeric(levels(factor(p_vals$K0)))[ModelID]	
@@ -293,7 +295,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,    LineUp=2,   Pred_Reps=500,   Zswitch_
 		names(kProb)[2]<-"P_Allocation"
 		kPars<-	K0estimates[[ModelID]]  # PARAMETERS
 		for( j in 1:modelK0now){
-			Parameters<-data.frame(subset(K0estimates[[ModelID]], k==j), Part1)
+			Parameters<-data.frame(subset(K0estimates[[ModelID]], k==j), Part1[ModelID,])
 			# BIND ID with allocation probability
 			if(j==1 & ModelID==1){
 				.df<-merge( cbind( "Score"=RegionName, "Model_ID"=ModelID, Specs, subset(kProb, k==j)), Parameters)
