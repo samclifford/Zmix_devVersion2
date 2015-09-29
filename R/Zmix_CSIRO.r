@@ -245,7 +245,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 	ZTable<-vector("list", length(K0))
 	#for each K0:
 	for ( .K0 in 1:length(K0)){
-		if( p_vals$Probability[.K0]>0.05){
+		if( p_vals$Probability[.K0]>0.01){
 			GrunK0<-Grun
 			# split data by K0
 			.iterK0<-c(1:dim(Grun$Ps)[1])[Grun$SteadyScore==K0[.K0]]
@@ -293,7 +293,8 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 			K0estimates[[.K0]]<-cbind(thetaCI, "Model_K0"=K0[[.K0]])
 			
 			# PLOTS density pars
-				if(p_vals$Probability[.K0]==max(p_vals$Probability)){
+				# if(p_vals$Probability[.K0]==max(p_vals$Probability)){
+				if(p_vals$Probability[.K0]>0.049){
 				
 					GrunK0us$Pars$k<-as.factor(GrunK0us$Pars$k)
 						pii.mean = aggregate(P ~ k, GrunK0us$Pars, mean)
@@ -345,7 +346,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
    		gp2<-ggplot(grrTable2, aes(x=Y, y=k, fill=Prob)) + geom_tile(size=2)+xlab("Allocation Probabilities")+xlim( range(x))+ylab("Cluster")+
    		scale_fill_gradientn(colours = gray.colors(10))+theme_bw()+theme(legend.position='none', legend.title=element_text( size=6), legend.text=element_text(4),
 		plot.margin =  unit(c(0,0.5, 0, 0.5), "cm"),  axis.title = element_text(size = rel(0.8)))
-		pdf( file= paste( "PPplots_" ,SaveFileName, ".pdf", sep=""), width=5, height=4, pointsize=12)
+		pdf( file= paste( "PPplots_" ,SaveFileName,"K_", K0[.K0], ".pdf", sep=""), width=5, height=4, pointsize=12)
 		print(
 			layOut(	
 				list(md,1:2	, 1),
