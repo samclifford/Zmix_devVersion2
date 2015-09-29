@@ -4,9 +4,8 @@
 \alias{Zmix_CSIRO}
 \title{Run Gibbs sampler with prior tempering}
 \usage{
-Zmix_CSIRO(Y, k = 10, iter = 5000, LineUp = 2, Pred_Reps = 500,
-  Zswitch_Sensitivity = 0.01, SaveFileName = "zmix", Yname = "Variable",
-  PlotType = "Boxplot", DATA_ADDITIONAL)
+Zmix_CSIRO(Y, k = 10, iter = 5000, LineUp = 2, SaveFileName = "zmix",
+  Yname = "Variable", DATA_ADDITIONAL, SaveFileSAME = "ALLRESULTS")
 }
 \arguments{
 \item{y,}{k,iter, isSim=TRUE, alphas=}
