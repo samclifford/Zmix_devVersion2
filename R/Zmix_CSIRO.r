@@ -343,9 +343,17 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 			
 			grrTable2<-grrTable
         for(i in 1:dim(grrTable2)[1]){oY<-Y[order(Y)] ;  	grrTable2$Y[i]<-oY[grrTable$Y[i]]}
-   		gp2<-ggplot(grrTable2, aes(x=Y, y=k, fill=Prob)) + geom_tile(size=2)+xlab("Allocation Probabilities")+xlim( range(x))+ylab("Cluster")+
-   		scale_fill_gradientn(colours = gray.colors(10))+theme_bw()+theme(legend.position='none', legend.title=element_text( size=6), legend.text=element_text(4),
+   		gp2<-ggplot(grrTable2, aes(x=Y, y=k, fill=Prob)) +
+   		 geom_tile(size=2)+xlab("Allocation Probabilities")+
+   		 xlim( range(x))+ylab("Cluster")+
+   		scale_fill_gradientn(colours = gray.colors(10))+
+   		theme_bw()+
+   		theme(legend.position='none', legend.title=element_text( size=6), legend.text=element_text(4),
 		plot.margin =  unit(c(0,0.5, 0, 0.5), "cm"),  axis.title = element_text(size = rel(0.8)))
+		##FIX
+
+
+		##
 		pdf( file= paste( "PPplots_" ,SaveFileName,"K_", K0[.K0], ".pdf", sep=""), width=5, height=4, pointsize=12)
 		print(
 			layOut(	
@@ -365,9 +373,11 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 	NumModel<-length(K0)
 	Part1<-data.frame( "Region"=RegionName,"Model_ID"=1:length(p_vals$K0),  "P_model" =p_vals$Prob)
 	# for each model, get allocation probs and join with ids
+
 	for (ModelID in 1:NumModel){ 	
+	if(p_vals$Probability[ModelID]>0.049){
 		modelK0now<-as.numeric(levels(factor(p_vals$K0)))[ModelID]	
-		kProb<- 	ZTable[[ModelID]][, -1]		# k and probability of allocation
+		kProb<- ZTable[[ModelID]][, -1]		# k and probability of allocation
 		names(kProb)[2]<-"P_Allocation"
 		kPars<-	K0estimates[[ModelID]]  # PARAMETERS
 		for( j in 1:modelK0now){
@@ -380,13 +390,14 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 			}
 		}
 	}
+	}
 	Final_Pars<-do.call(rbind, K0estimates)
 	print(p_vals)
 	
 	Final_Result<-list("Final_Pars"=Final_Pars, "Test"=p_vals, "All"= .df,"Z"= Zestimates, "Zprob"=ZTable, "Pars_us"=GrunK0us_FIN)
 
 	write.csv(.df, file=paste("Zmix_", SaveFileName, ".csv", sep=""))
-	write.table(.df, file=paste("Zmix_", SaveFileSAME, ".csv", sep=""), sep=",", append=TRUE, col.names = FALSE,row.names = TRUE)
+	# write.table(.df, file=paste("Zmix_", SaveFileSAME, ".csv", sep=""), sep=",", append=TRUE, col.names = FALSE,row.names = TRUE)
 	save(Final_Result, file=paste("Zmix_", SaveFileName, ".RDATA", sep=""))
 
 	return(Final_Result)
