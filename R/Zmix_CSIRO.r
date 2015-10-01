@@ -11,32 +11,7 @@
 Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname="Variable", DATA_ADDITIONAL, SaveFileSAME="ALLRESULTS"){
    Zswitch_Sensitivity=0.01
    Pred_Reps=1000
-   parallelAccept<-function(w1, w2, a1, a2){
-						w1[w1< 1e-200]<-1e-200             # truncate so super small values dont crash everyting
-						w2[w2< 1e-200]<-1e-200
-						T1<-dDirichlet(w2, a1, log=TRUE)
-						T2<-dDirichlet(w1, a2, log=TRUE)
-						B1<-dDirichlet(w1, a1, log=TRUE)
-						B2<-dDirichlet(w2, a2, log=TRUE)
-						MH<-min(1,	exp(T1+T2-B1-B2)) 
-						Ax<-sample(c(1,0), 1, prob=c(MH,1-MH))
-						return(Ax)}
-			ggAllocationPlot<-function( outZ, myY){
-			grr<-outZ[order(myY),]
-			grrTable<-data.frame("myY"=NULL, "k"=NULL, "Prob"=NULL)[-1,]
-			maxK<-max(grr)
-			for (i in 1:length(myY)){rr<-factor(grr[i,], levels=1:maxK)
-			grrTable<-rbind(grrTable,cbind(i,c(1:maxK), matrix(table(rr)/ length(rr) )))    }
-			names(grrTable)<-c("myY", "k", "Prob")
-			grrTable$k<-as.factor(grrTable$k)
-			gp<-ggplot(grrTable, aes(x=myY, y=k, fill=Prob)) + geom_tile()+ggtitle(  "Posterior allocations")+
-			xlab("index of ordered y")+
-			scale_fill_gradientn(colours = c("#ffffcc","#a1dab4","#41b6c4","#2c7fb8","#253494" ))+theme_bw()+theme(legend.position='right')
-			#ggsave( plot=gp,  filename=paste( "Allocations_", plotfilename ,"K_",maxK, ".pdf",sep="") )
-			gp
-			}
-			maxZ<-function (x)  as.numeric(names(which.max(table( x ))))
-
+    
 	alphas	<- 	c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))	                                                                                   # 1. set up priors
   	Plot_Title=Yname
 	tau=0.01
@@ -48,6 +23,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 	d<-2
 	lambda=sum(Y)/n  
    	Burn	<- 	iter/3
+	
 	mux<-list(mu=seq(from=min(Y), to=max(Y),length.out=k),sigma=rep(1, k),p=rep(1/k,k), k=k)
 	n <-length(Y) 
 	a=2.5; b<-0.5*var(Y);d<-2
@@ -63,7 +39,31 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 	ZSaved=	replicate(nCh,  matrix(0,nrow = n, ncol = iter)	, simplify=F)
 	SteadyScore<-data.frame("Iteration"=c(1:iter), "K0"=k)
 
-					
+	parallelAccept<-function(w1, w2, a1, a2){
+		w1[w1< 1e-200]<-1e-200             # truncate so super small values dont crash everyting
+		w2[w2< 1e-200]<-1e-200
+		T1<-dDirichlet(w2, a1, log=TRUE)
+		T2<-dDirichlet(w1, a2, log=TRUE)
+		B1<-dDirichlet(w1, a1, log=TRUE)
+		B2<-dDirichlet(w2, a2, log=TRUE)
+		MH<-min(1,	exp(T1+T2-B1-B2)) 
+		Ax<-sample(c(1,0), 1, prob=c(MH,1-MH))
+		return(Ax)}
+	ggAllocationPlot<-function( outZ, myY){
+				grr<-outZ[order(myY),]
+				grrTable<-data.frame("myY"=NULL, "k"=NULL, "Prob"=NULL)[-1,]
+				maxK<-max(grr)
+				for (i in 1:length(myY)){rr<-factor(grr[i,], levels=1:maxK)
+				grrTable<-rbind(grrTable,cbind(i,c(1:maxK), matrix(table(rr)/ length(rr) )))    }
+				names(grrTable)<-c("myY", "k", "Prob")
+				grrTable$k<-as.factor(grrTable$k)
+				gp<-ggplot(grrTable, aes(x=myY, y=k, fill=Prob)) + geom_tile()+ggtitle(  "Posterior allocations")+
+				xlab("index of ordered y")+
+				scale_fill_gradientn(colours = c("#ffffcc","#a1dab4","#41b6c4","#2c7fb8","#253494" ))+theme_bw()+theme(legend.position='right')
+				#ggsave( plot=gp,  filename=paste( "Allocations_", plotfilename ,"K_",maxK, ".pdf",sep="") )
+				gp
+				}
+	maxZ<-function (x)  as.numeric(names(which.max(table( x ))))			
 			                                                                                                          # start chains and  create inits needed for i=1 
 	for (.ch in 1:nCh){
 	Bigmu[[.ch]][1,] <- mux$mu                                                                        # initial value of mu's
@@ -256,7 +256,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 			GrunK0$Zs<-	Grun$Zs[,.iterK0]
 			GrunK0$SteadyScore<-Grun$SteadyScore[.iterK0]
 			## 2. unswitch
-			GrunK0us<-Zswitch(GrunK0, LineUp, Zswitch_Sensitivity)
+			GrunK0us<-Zswitch(GrunK0, 2, Zswitch_Sensitivity)
 			GrunK0us_FIN[[.K0]]<-GrunK0us
 			Ztemp<-GrunK0us$Zs # ALOC  PROBABILITIES
 			ZTable[[.K0]]<-data.frame("myY"=0, "k"=0, "Prob"=0)[-1,]
@@ -348,8 +348,14 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
    		 xlim( range(x))+ylab("Cluster")+
    		scale_fill_gradientn(colours = gray.colors(10))+
    		theme_bw()+
-   		theme(legend.position='none', legend.title=element_text( size=6), legend.text=element_text(4),
-		plot.margin =  unit(c(0,0.5, 0, 0.5), "cm"),  axis.title = element_text(size = rel(0.8)))
+   		theme(legend.position="none", #c(1,1),
+   			# legend.justification = c(1, 1), 
+   			legend.title=element_text( size=6), 
+   			legend.text=element_text(size=4),
+			plot.margin =  unit(c(0,0.5, 0, 0.5), "cm"), 
+			axis.title = element_text(size = rel(0.8))
+			)
+	# theme(legend.justification = c(1, 1), legend.position=c(1,1),legend.title=element_text(size=6), 	
 		##FIX
 
 
