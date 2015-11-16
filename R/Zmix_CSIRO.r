@@ -12,8 +12,8 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
    Zswitch_Sensitivity=0.01
    Pred_Reps=1000
     
-	# alphas	<- 	c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))	                                                                                   # 1. set up priors
-	alphas	<- 	c(1/2^(c(2,6, 20, 30)))	                                                                                   # 1. set up priors
+	alphas	<- 	c(30, 20, 10, 5, 3, 1, 0.5, 1/2^(c(2,3,4,5,6, 8, 10, 15, 20, 30)))	                                                                                   # 1. set up priors
+	# alphas	<- 	c(1/2^(c(2,6, 20, 30)))	                                                                                   # 1. set up priors
   	Plot_Title=Yname
 	tau=0.01
 	nCh<-length(alphas)
@@ -228,6 +228,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 		BigRes<-list(Bigmu = Bigmu, Bigsigma=Bigsigma, Bigp = Bigp, Loglike=Loglike, Zs=ZSaved, YZ=Y, SteadyScore=SteadyScore,TrackParallelTemp=TrackParallelTemp)	
 		Grun<-trimit(Out=BigRes, Burn)
 		K<-dim(Grun$Ps)[2]
+		if(is.null(dim(Grun$Ps))){K<-1}
 	
 	#
 	#
@@ -241,7 +242,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 	## 1. split by number of components
 	K0<-as.numeric(names(table(Grun$SteadyScore)))
 	# SAVE table of tests, parameter estimates and clustering (Z's)
-	p_vals<-data.frame("K0"=K0, "Probability"=as.numeric(table(Grun$SteadyScore))/dim(Grun$Ps)[1], "MAE"=NA, "MSE"=NA,"Pmin"=NA, "Pmax"=NA, "Concordance"=NA, "MAPE"=NA, "MSPE"=NA)
+	p_vals<-data.frame("K0"=K0, "Probability"=as.numeric(table(Grun$SteadyScore))/length(Grun$SteadyScore), "MAE"=NA, "MSE"=NA,"Pmin"=NA, "Pmax"=NA, "Concordance"=NA, "MAPE"=NA, "MSPE"=NA)
 
 	K0estimates<-vector("list", length(K0))
 	Zestimates<-vector("list", length(K0))
@@ -253,12 +254,13 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 		if( p_vals$Probability[.K0]>0.01){
 			GrunK0<-Grun
 			# split data by K0
-			.iterK0<-c(1:dim(Grun$Ps)[1])[Grun$SteadyScore==K0[.K0]]
-			GrunK0$Mu<-	Grun$Mu[.iterK0,]
+			.iterK0<-c(1:length(Grun$SteadyScore))[Grun$SteadyScore==K0[.K0]]
+		    GrunK0$Mu<-	Grun$Mu[.iterK0,]
 			GrunK0$Sig<-Grun$Sig[.iterK0,]
 			GrunK0$Ps<-	Grun$Ps[.iterK0,]
 			GrunK0$Loglike<-Grun$Loglike[.iterK0]
 			GrunK0$Zs<-	Grun$Zs[,.iterK0]
+			
 			GrunK0$SteadyScore<-Grun$SteadyScore[.iterK0]
 			## 2. unswitch
 			GrunK0us<-Zswitch(GrunK0, 2, Zswitch_Sensitivity)
