@@ -308,7 +308,7 @@ Zmix_CSIRO<-function(Y, k=10,iter=5000,  LineUp=2,  SaveFileName="zmix",  Yname=
 						mu.mean = aggregate(Mu ~ k, GrunK0us$Pars, mean)
 						var.mean = aggregate(Sig ~ k, GrunK0us$Pars, mean)
 					
-if(K0>1){
+if(K0[[.K0]]>1){
 	Mix.pars<-list("Mu"=cbind( mu.mean[,2][1], mu.mean[,2][length(mu.mean)]), 
 				"Var"=cbind(var.mean[,2][1], var.mean[,2][length(var.mean)]), 
 				"P"=cbind(pii.mean[,2][1], pii.mean[,2][length(pii.mean)])
@@ -337,25 +337,23 @@ if(K0>1){
 		    geom_polygon(data=em.df,aes(x,y,fill=comp),color="black", alpha=0.5, size=0.2)+
 		    scale_fill_grey("Cluster\nMean",labels=format(em.df$In.mu,digits=3))+ 
 		    theme_bw()+geom_vline(data=pars, aes(xintercept=In.mu),color="black",linetype="dashed", size=0.3)+
-		   theme(legend.position="none")+
-		   annotate("text", x = pars$In.mu[1]-0.03, y =-0.2, label = round(pars$In.mu[1], 2), angle=90, size=2)+ 
+		    theme(legend.position="none")+
+		    annotate("text", x = pars$In.mu[1]-0.01, y =-0.25, label = round(pars$In.mu[1], 2), angle=90, size=2)+ 
 		     scale_color_grey()+
 			ggtitle(bquote(atop(.(Yname), atop(italic(paste("P(K=", .(K0[.K0]), ")=", .(p_vals$Probability[.K0]), sep=""))))))+
-			ylim(c(-0.3, 2.3))
-# theme(legend.justification = c(1, 1), legend.position=c(1,1),legend.title=element_text(size=6), 
+			 coord_cartesian(ylim= c(-0.5,  max(em.df$y)+0.5))
+			# theme(legend.justification = c(1, 1), legend.position=c(1,1),legend.title=element_text(size=6), 
 		    # legend.text=element_text(size=4),   axis.title = element_text(size = rel(0.8))) +
-if(K0==2){
+if(K0[[.K0]]==2){
 	md<-md+ geom_vline(xintercept = Midpoint[[.K0]],linetype="dotted",col=grey(.5))+ 
-	annotate("text", x = Midpoint[[.K0]]-0.03, y =-0.2, label = round(Midpoint[[.K0]], 2), angle=90, size=2, colour=grey(.5))+  
-	annotate("text", x = pars$In.mu[2]-0.03, y =-0.2, label = round(pars$In.mu[2], 2), angle=90, size=2)
-		    
+	annotate("text", x = Midpoint[[.K0]]-0.01, y =-0.2, label = round(Midpoint[[.K0]], 2), angle=90, size=2, colour=grey(.5))+  
+	annotate("text", x = pars$In.mu[2]-0.01, y =-0.2, label = round(pars$In.mu[2], 2), angle=90, size=2)
 }
-if(K0==3){
+if(K0[[.K0]]==3){
 	md<-md+ geom_vline(xintercept = Midpoint[[.K0]],linetype="dotted",col=grey(.5))+ 
-	annotate("text", x = Midpoint[[.K0]]-0.03, y =-0.2, label = round(Midpoint[[.K0]], 2), angle=90, size=2, colour=grey(.5))+  
-	annotate("text", x = pars$In.mu[2]-0.03, y =-0.2, label = round(pars$In.mu[2], 2), angle=90, size=2)+  
-	annotate("text", x = pars$In.mu[3]-0.03, y =-0.2, label = round(pars$In.mu[3], 2), angle=90, size=2)
-		    
+	annotate("text", x = Midpoint[[.K0]]-0.01, y =-0.2, label = round(Midpoint[[.K0]], 2), angle=90, size=2, colour=grey(.5))+  
+	annotate("text", x = pars$In.mu[2]-0.01, y =-0.2, label = round(pars$In.mu[2], 2), angle=90, size=2)+  
+	annotate("text", x = pars$In.mu[3]-0.01, y =-0.2, label = round(pars$In.mu[3], 2), angle=90, size=2) 
 }
 
 		#allocations / histogram
@@ -384,7 +382,7 @@ if(K0==3){
 	# theme(legend.justification = c(1, 1), legend.position=c(1,1),legend.title=element_text(size=6), 	
 		
 
-			pdf( file= paste( "PPplots_" ,SaveFileName,"K_", K0[.K0], ".pdf", sep=""), width=5, height=4, pointsize=2)
+			pdf( file= paste( "PPplots_" ,SaveFileName,"K_", K0[.K0], ".pdf", sep=""), width=4, height=5)
 				print(
 					layOut(	
 						list(md,1:2	, 1),
