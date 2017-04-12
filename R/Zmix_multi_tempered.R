@@ -7,7 +7,7 @@
 #' 
 Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
   
-  parallelAccept<-function(w1, w2, a1, a2){
+  parallelAccept <- function(w1, w2, a1, a2){
     w1[w1< 1e-200]<-1e-200   # truncate so super small values dont crash everyting
     w2[w2< 1e-200]<-1e-200
     T1 <- dDirichlet(w2, a1, log = TRUE)
@@ -19,7 +19,7 @@ Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
     return(Ax)}
   
   CovSample<-function(nsk, WkZk, ybark){   #NEW 11 June 2015
-    ck<-c0+nsk
+    ck <- c0 + nsk
     if (nsk==0) {
       MCMCpack::riwish(c0, C0)
     } else {
@@ -150,8 +150,13 @@ Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
       for (i in 1:n) { for (.k in 1:k){
         PZs[,.k]<-
           #dmvnorm(Y, newMuLIST[[.k]], matrix(newCovLIST[[.k]], nrow=r, byrow=T))*Ps[[.ch]][.it,.k]
-          dMvn(Y, newMuLIST[[.k]], matrix(newCovLIST[[.k]], nrow=r, byrow=T))*Ps[[.ch]][.it,.k]
-      }}
+          dMvn(Y, 
+               newMuLIST[[.k]],
+               matrix(newCovLIST[[.k]],
+                      nrow=r,
+                      byrow=T))*Ps[[.ch]][.it,.k]
+      }
+      }
       
       #scale each row to one
       for (i in 1:n)		{
@@ -168,12 +173,20 @@ Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
     ## PARALLEL TEMPERING MOVES
     if(.it>20){
       if( sample(c(1,0),1, 0.5)==1){
-        Chain1<-sample( 1:(nCh-1), 1) ; 	Chain2<-Chain1+1
-        MHratio<- parallelAccept(Ps[[Chain1]][.it,], Ps[[Chain2]][.it,], rep(alphas[Chain1],k), rep(alphas[Chain2],k))
+        Chain1 <- sample( 1:(nCh-1), 1) ;
+        Chain2 <- Chain1+1
+        MHratio<- parallelAccept(
+          Ps[[Chain1]][.it,],
+          Ps[[Chain2]][.it,], 
+          rep(alphas[Chain1],k), 
+          rep(alphas[Chain2],k))
+        
         if (MHratio==1){
           # Just flip the allocations since all pars drawn from this
-          .z1<-	Zs[[Chain1]][.it,] 	;		.z2<-	Zs[[Chain2]][.it,]
-          Zs[[Chain1]][.it,]<-.z2		;		Zs[[Chain2]][.it,]<-.z1
+          .z1<-	Zs[[Chain1]][.it,]
+          .z2<-	Zs[[Chain2]][.it,]
+          Zs[[Chain1]][.it,]<-.z2		
+          Zs[[Chain2]][.it,]<-.z1
         }}}
     
     #logLikelihood
@@ -201,13 +214,13 @@ Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
   #	SteadyScore<-Out$SteadyScore$K[c(iter-nEnd+1):iter]
   #	list(Mu = mu,Cov=covs, P= ps,  Zs=zs, Y=Out$Y, Loglike=Loglike, SteadyScore=SteadyScore)	}
   
-  
-  ps<-Ps[[nCh]][c(iter-EndSize+1):iter,]
-  mu<-subset(FINmu[[nCh]], Iteration>c(iter-EndSize))
-  covs<-subset(FINcov[[nCh]], Iteration>c(iter-EndSize))
-  zs<-Zs[[nCh]][c(iter-EndSize):(iter-1),]
-  Loglike<-Loglike[c(iter-EndSize+1):iter]
-  SteadyScore<-SteadyScore$K[c(iter-EndSize+1):iter]
+  ps <- Ps[[nCh]][c(iter - EndSize + 1):iter, ]
+  mu <- subset(FINmu[[nCh]], Iteration > c(iter - EndSize))
+  covs <- subset(FINcov[[nCh]],
+                 Iteration > c(iter - EndSize))
+  zs <- Zs[[nCh]][c(iter - EndSize):(iter - 1), ]
+  Loglike <- Loglike[c(iter - EndSize + 1):iter]
+  SteadyScore <- SteadyScore$K[c(iter - EndSize + 1):iter]
   
   
   return(list(
