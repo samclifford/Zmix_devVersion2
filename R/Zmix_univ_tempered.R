@@ -236,5 +236,5 @@ Zmix_univ_tempered<-function(y, k,iter=5000,  tau=1, isSim=TRUE, alphas= c(30, 2
 					#return(SmallRes)	
 					return(BigRes)	
 					}
-
+}
 
