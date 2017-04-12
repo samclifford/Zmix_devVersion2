@@ -1,6 +1,5 @@
 #' Simulate Univariate normal Mixture
 #'
-#' ...
 #' @param n The number of samples to draw
 #' @param mu The mean
 #' @param sig the covariance
@@ -11,7 +10,7 @@
 #' @examples
 #' #not run
 
-simudZ <-function(n, mu, sig, p, k){
+simudZ <- function(n, mu, sig, p, k){
   Z = sample(c(1:k),
              n,
              prob = p,
