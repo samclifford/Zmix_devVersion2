@@ -6,8 +6,6 @@
 #' @export
 #' @examples
 #' #nope
-
-
 trimit <- function(Out=Out, nEnd=EndSize){
   yo <-length(Out$Bigmu) #number of chains
   nmax <- length(Out$Loglike)
