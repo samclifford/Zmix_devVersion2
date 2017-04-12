@@ -132,7 +132,7 @@ Zmix_light<-function(y, k,iter=5000,  isSim=TRUE, burn=300, alphas= c(30, 20, 10
 					  
 
 					if(j %% 50==0){
-					Sys.sleep(0.01)
+					#Sys.sleep(0.01)
 					setTxtProgressBar(pb, j)
 					#if(j %% 10==0){
 					#par(mfrow=c(1,2))

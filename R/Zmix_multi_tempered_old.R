@@ -100,11 +100,11 @@
 					pb <- txtProgressBar(min = 0, max = iter, style = 3)
 
 					for (.it in 1:iter){  #for each iteration
-					  if(.it %% 10 == 0) { Sys.sleep(0.01)
+					  if(.it %% 10 == 0) { #Sys.sleep(0.01)
 					  	par(mfrow=c(2,1))
 	  					plot(SteadyScore$K0~SteadyScore$Iteration, main='#non-empty groups', type='l')
 	  					ts.plot(Ps[[nCh]], main='emptying', col=rainbow(k))
-					  Sys.sleep(0)
+					  #Sys.sleep(0)
 						setTxtProgressBar(pb, .it) }
 
 					for (.ch in 1:nCh){   #for each chain
