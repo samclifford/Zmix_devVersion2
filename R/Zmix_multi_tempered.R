@@ -5,7 +5,7 @@
 #' @examples
 #' #not run
 #' 
-Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
+Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500, plotting=FALSE){
   
   parallelAccept <- function(w1, w2, a1, a2){
     w1[w1< 1e-200]<-1e-200   # truncate so super small values dont crash everyting
@@ -103,12 +103,16 @@ Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500){
   pb <- txtProgressBar(min = 0, max = iter, style = 3)
   
   for (.it in 1:iter){  #for each iteration
-    if(.it %% 10 == 0) { #Sys.sleep(0.01)
-      par(mfrow=c(2,1))
-      plot(SteadyScore$K0~SteadyScore$Iteration, main='#non-empty groups', type='l')
-      ts.plot(Ps[[nCh]], main='emptying', col=rainbow(k))
+    if(.it %% 10 == 0 ) { #Sys.sleep(0.01)
+	  if (plotting){
+	    par(mfrow=c(2,1))
+        plot(SteadyScore$K0~SteadyScore$Iteration, main='#non-empty groups', type='l')
+        ts.plot(Ps[[nCh]], main='emptying', col=rainbow(k))
+	  }
+	  
       #Sys.sleep(0)
-      setTxtProgressBar(pb, .it) }
+      setTxtProgressBar(pb, .it) 
+	}
     
     for (.ch in 1:nCh){   #for each chain
       
