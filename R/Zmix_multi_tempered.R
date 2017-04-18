@@ -42,6 +42,7 @@ Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500, plot
     }
   }
   minions <- function(ZZ){
+  # is k global?
     IndiZ <- (ZZ == matrix((1:k), nrow = n, ncol = k, byrow = T))
     ns <- apply(IndiZ,2,sum)  	#  size of each group
     .Ysplit<-replicate(k, list())	#storage to group Y's
@@ -103,16 +104,7 @@ Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500, plot
   pb <- txtProgressBar(min = 0, max = iter, style = 3)
   
   for (.it in 1:iter){  #for each iteration
-    if(.it %% 10 == 0 ) { #Sys.sleep(0.01)
-	  if (plotting){
-	    par(mfrow=c(2,1))
-        plot(SteadyScore$K0~SteadyScore$Iteration, main='#non-empty groups', type='l')
-        ts.plot(Ps[[nCh]], main='emptying', col=rainbow(k))
-	  }
-	  
-      #Sys.sleep(0)
-      setTxtProgressBar(pb, .it) 
-	}
+    
     
     for (.ch in 1:nCh){   #for each chain
       
@@ -174,6 +166,18 @@ Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500, plot
     } # end of chain loop
     SteadyScore$K0[.it]<-sum(table(Zs[[nCh]][.it,])>0)
     
+	if(.it %% 10 == 0 ) { #Sys.sleep(0.01)
+	  if (plotting){
+	    par(mfrow=c(2,1))
+        plot(SteadyScore$K0~SteadyScore$Iteration, main='#non-empty groups', type='n')
+		plot(SteadyScore$K0[1:.it]~SteadyScore$Iteration[1:.it], main='#non-empty groups', type='l')
+        ts.plot(Ps[[nCh]], main='emptying', col=rainbow(k))
+	  }
+	  
+      #Sys.sleep(0)
+      setTxtProgressBar(pb, .it) 
+	}
+	
     ## PARALLEL TEMPERING MOVES
     if(.it>20){
       if( sample(c(1,0),1, 0.5)==1){
@@ -200,7 +204,9 @@ Zmix_multi_tempered <- function(YZ, iter, k, alphas, sim=TRUE, EndSize=500, plot
       for (numK in 1:length(non0id)){
         .ll<-.ll+ Ps[[nCh]][.it,non0id[numK]]* dmvnorm(Y[i,], newMu[,non0id[numK]], matrix(newCov[,non0id[numK]], ncol=r,nrow=r, byrow=T))
       }
-      Loglike[.it]<-Loglike[.it]+ log(.ll)}
+     
+	  Loglike[.it]<-Loglike[.it]+ log(.ll)
+	}
     
   }
   close(pb)
