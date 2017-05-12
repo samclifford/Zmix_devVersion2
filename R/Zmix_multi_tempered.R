@@ -1,5 +1,11 @@
 #' This functionZmix_multi_tempered
-#' @param stuff and more
+#' @param YZ a data.frame where each row is the principal component loadings from spikes
+#' @param iter the total number of MCMC iterations to draw 
+#' @param k the number of mixture components to fit
+#' @param alphas the indices to use in parallel tempering
+#' @param sim a flag for telling the function whether the data are in a list or not
+#' @param EndSize the number of samples at the end of the chain to be kept
+#' @param plotting do we wanto make progressive plots?
 #' @keywords multi
 #' @export
 #' @examples
