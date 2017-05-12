@@ -1,7 +1,10 @@
 Package: ZmixUnderConstruction
-Title: What the package does (short line)
-Version: 0.1
-Authors@R: "First Last <first.last@example.com> [aut, cre]"
+Title: Overfitted Mixture Models
+Version: 0.11
+Authors@R: c(person("Zoe", "van Havre", email = "",
+                  role = c("aut", "cre")),
+             person("Sam", "Clifford", email = "samuel.clifford@qut.edu.au",
+                  role = c("ctb")))
 Description: What the package does (paragraph)
 Depends:
     R (>= 3.1.0),
